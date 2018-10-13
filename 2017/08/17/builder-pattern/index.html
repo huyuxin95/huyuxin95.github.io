@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="设计模式," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="第二篇:建造者模式  什么是建造者模式建造者模式是一步一步创建一个复杂对象，允许用户不了解细节的情况下精细的控制对象的构造过程。使得复杂对象的构建与他的表示相分离，同样的构造过程可以创建不同的表示。 经典模式在生活中我们经常买票，各种各样的票，我们这里要创建一个可以售卖多种票的程序。首先是产品Product，他是一个抽象类，他有各种票都有的特征，以及票在购买当中会经历的状态，check，检测这张">
+<meta name="keywords" content="设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(设计模式)建造者模式">
+<meta property="og:url" content="http://yoursite.com/2017/08/17/builder-pattern/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="第二篇:建造者模式  什么是建造者模式建造者模式是一步一步创建一个复杂对象，允许用户不了解细节的情况下精细的控制对象的构造过程。使得复杂对象的构建与他的表示相分离，同样的构造过程可以创建不同的表示。 经典模式在生活中我们经常买票，各种各样的票，我们这里要创建一个可以售卖多种票的程序。首先是产品Product，他是一个抽象类，他有各种票都有的特征，以及票在购买当中会经历的状态，check，检测这张">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20170816235040517?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2018-10-13T03:03:59.292Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(设计模式)建造者模式">
+<meta name="twitter:description" content="第二篇:建造者模式  什么是建造者模式建造者模式是一步一步创建一个复杂对象，允许用户不了解细节的情况下精细的控制对象的构造过程。使得复杂对象的构建与他的表示相分离，同样的构造过程可以创建不同的表示。 经典模式在生活中我们经常买票，各种各样的票，我们这里要创建一个可以售卖多种票的程序。首先是产品Product，他是一个抽象类，他有各种票都有的特征，以及票在购买当中会经历的状态，check，检测这张">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20170816235040517?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/17/builder-pattern/"/>
+
+
+
+
+
+  <title>(设计模式)建造者模式 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/17/builder-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">(设计模式)建造者模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-17T00:23:27+08:00">
+                2017-08-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>第二篇:建造者模式</p>
+</blockquote>
+<h2 id="什么是建造者模式"><a href="#什么是建造者模式" class="headerlink" title="什么是建造者模式"></a>什么是建造者模式</h2><p>建造者模式是一步一步创建一个复杂对象，允许用户不了解细节的情况下精细的控制对象的构造过程。使得复杂对象的构建与他的表示相分离，同样的构造过程可以创建不同的表示。</p>
+<h2 id="经典模式"><a href="#经典模式" class="headerlink" title="经典模式"></a><b>经典模式</b></h2><p>在生活中我们经常买票，各种各样的票，我们这里要创建一个可以售卖多种票的程序。<br>首先是产品Product，他是一个抽象类，他有各种票都有的特征，以及票在购买当中会经历的状态，check，检测这张票的信息是否可靠（如生成时间，设备，渠道等），pay，对这张票进行支付，query，查询这张票的支付状态（如，金额是否一致等）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public abstract class Ticket &#123;</span><br><span class="line">	protected String ticketname;</span><br><span class="line">	protected boolean isCheck=false;</span><br><span class="line">	protected boolean isPayed=false;</span><br><span class="line">	protected boolean isQuery=false;</span><br><span class="line"></span><br><span class="line">	public Ticket() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public abstract void  setTicketname();</span><br><span class="line"></span><br><span class="line">	public void setCheck(boolean isCheck) &#123;</span><br><span class="line">		this.isCheck = isCheck;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setPayed(boolean isPayed) &#123;</span><br><span class="line">		this.isPayed = isPayed;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public boolean isQuery() &#123;</span><br><span class="line">		return isQuery;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setQuery(boolean isQuery) &#123;</span><br><span class="line">		this.isQuery = isQuery;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return &quot;Ticket [ticketname=&quot; + ticketname + &quot;, isCheck=&quot; + isCheck + &quot;, isPayed=&quot; + isPayed + &quot;, isQuery=&quot;</span><br><span class="line">				+ isQuery + &quot;]&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在这个程序出售两种票，一种火车票，一种汽车票</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line">/**</span><br><span class="line">*火车票</span><br><span class="line">**/</span><br><span class="line">public class TrainTicket extends Ticket &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	public TrainTicket() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void setTicketname() &#123;</span><br><span class="line">		ticketname=TrainTicket.class.getSimpleName();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line">/**</span><br><span class="line">*汽车票</span><br><span class="line">**/</span><br><span class="line">public class BusTicket extends Ticket &#123;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	public BusTicket() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void setTicketname() &#123;</span><br><span class="line">		ticketname=BusTicket.class.getSimpleName();</span><br><span class="line">	&#125;	</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>处理两种票的逻辑应该是一致的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public abstract class TicketSeller &#123;</span><br><span class="line"></span><br><span class="line">	public abstract void createTicket(); //创建票</span><br><span class="line">	public abstract void checkTicket();  //检查票的生成信息</span><br><span class="line">	public abstract void payTicket();    //支付 </span><br><span class="line">	public abstract void queryTicket();  //查询</span><br><span class="line">	public abstract void drawTicket();   //出票</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是细节肯定是不一致的，所以我们创建两个不同的Builder</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public class TrainTicketSeller extends TicketSeller &#123;</span><br><span class="line"></span><br><span class="line">	private TrainTicket ticket;</span><br><span class="line">	</span><br><span class="line">	@Override</span><br><span class="line">	public void createTicket() &#123;</span><br><span class="line">		ticket=new TrainTicket();</span><br><span class="line">		ticket.setTicketname();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void checkTicket() &#123;</span><br><span class="line">		ticket.isCheck=true;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void payTicket() &#123;</span><br><span class="line">		ticket.isPayed=true;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void queryTicket() &#123;</span><br><span class="line">		ticket.isQuery=true;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void drawTicket() &#123;</span><br><span class="line">		System.out.println(ticket.toString());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public class BusTicketSeller extends TicketSeller &#123;</span><br><span class="line"></span><br><span class="line">	private BusTicket busticket;</span><br><span class="line">	</span><br><span class="line">	@Override</span><br><span class="line">	public void createTicket() &#123;</span><br><span class="line">		busticket=new BusTicket();</span><br><span class="line">		busticket.setTicketname();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void checkTicket() &#123;</span><br><span class="line">		busticket.isCheck=true;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void payTicket() &#123;</span><br><span class="line">		busticket.isPayed=true;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public void queryTicket() &#123;</span><br><span class="line">		busticket.isQuery=true;</span><br><span class="line">	&#125;</span><br><span class="line">	@Override</span><br><span class="line">	public void drawTicket() &#123;</span><br><span class="line">		System.out.println(busticket.toString());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当在完成票的生成到出票的过程，顺序应该是一定的，不能还没生成票就去支付，还没支付就去查询。所以需要一个指挥者（Director）来控制他们的进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public class TicketProgram &#123;</span><br><span class="line"></span><br><span class="line">	public static void sellTicket(TicketSeller ticketSeller)&#123;</span><br><span class="line">		ticketSeller.createTicket();</span><br><span class="line">		ticketSeller.checkTicket();</span><br><span class="line">		ticketSeller.payTicket();</span><br><span class="line">		ticketSeller.queryTicket();</span><br><span class="line">		ticketSeller.drawTicket();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们就可以安心售票了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		TrainTicketSeller ticketSeller =new TrainTicketSeller();</span><br><span class="line">		BusTicketSeller busTicketSeller=new BusTicketSeller();</span><br><span class="line">		</span><br><span class="line">		TicketProgram.sellTicket(ticketSeller);</span><br><span class="line">		TicketProgram.sellTicket(busTicketSeller);</span><br><span class="line">		TicketProgram.sellTicket(ticketSeller);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Ticket [ticketname=TrainTicket, isCheck=true, isPayed=true, isQuery=true]</span><br><span class="line">Ticket [ticketname=TrainTicket, isCheck=true, isPayed=true, isQuery=true]</span><br><span class="line">Ticket [ticketname=BusTicket, isCheck=true, isPayed=true, isQuery=true]</span><br></pre></td></tr></table></figure>
+<p>当我们的程序需要买别的票的时候，只需要再次继承抽象类Ticket，并创建处理对应票的Builder就可以了，在TicketProgram 里我们通过依赖注入的方式，使得即使有新的票出售只要逻辑一致，也能正常控制票的出售。<br>在经典的建造者模式当中Director的控制流程应该是可变的，创建多个不同的sellTicket()方法，通过调动builder的执行顺序产生不同的结果。这就是建造者模式。</p>
+<h2 id="填充模式"><a href="#填充模式" class="headerlink" title="填充模式"></a><b>填充模式</b></h2><p>填充模式，你可能没听过，因为这是我自己起的名字。很多时候对象的构建伴随着很多很多参数的初始化，并且这些参数又不得不先初始化好，大量的setter和getter需要一个管理者来管理一波。比如刚刚的买票，买票可以但是现在的票都是实名制的，在购票前应先获取购票人信息。<br>于是就有了下面的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public abstract class Ticket &#123;</span><br><span class="line">	protected String ticketname;</span><br><span class="line">	protected boolean isCheck=false;</span><br><span class="line">	protected boolean isPayed=false;</span><br><span class="line">	protected boolean isQuery=false;</span><br><span class="line"></span><br><span class="line">	protected String holdername;</span><br><span class="line">	protected String sex;</span><br><span class="line">	protected int age;</span><br><span class="line">	protected String birthday;</span><br><span class="line">	protected String address;</span><br><span class="line">	</span><br><span class="line">	public Ticket() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public abstract void  setTicketname();</span><br><span class="line"></span><br><span class="line">	public void setCheck(boolean isCheck) &#123;</span><br><span class="line">		this.isCheck = isCheck;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setPayed(boolean isPayed) &#123;</span><br><span class="line">		this.isPayed = isPayed;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public boolean isQuery() &#123;</span><br><span class="line">		return isQuery;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setQuery(boolean isQuery) &#123;</span><br><span class="line">		this.isQuery = isQuery;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public String getTicketname() &#123;</span><br><span class="line">		return ticketname;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setTicketname(String ticketname) &#123;</span><br><span class="line">		this.ticketname = ticketname;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getHoldername() &#123;</span><br><span class="line">		return holdername;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setHoldername(String holdername) &#123;</span><br><span class="line">		this.holdername = holdername;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getSex() &#123;</span><br><span class="line">		return sex;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setSex(String sex) &#123;</span><br><span class="line">		this.sex = sex;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getAge() &#123;</span><br><span class="line">		return age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setAge(int age) &#123;</span><br><span class="line">		this.age = age;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getBirthday() &#123;</span><br><span class="line">		return birthday;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setBirthday(String birthday) &#123;</span><br><span class="line">		this.birthday = birthday;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getAddress() &#123;</span><br><span class="line">		return address;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setAddress(String address) &#123;</span><br><span class="line">		this.address = address;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public boolean isCheck() &#123;</span><br><span class="line">		return isCheck;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public boolean isPayed() &#123;</span><br><span class="line">		return isPayed;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return &quot;Ticket [ticketname=&quot; + ticketname + &quot;, isCheck=&quot; + isCheck + &quot;, isPayed=&quot; + isPayed + &quot;, isQuery=&quot;</span><br><span class="line">				+ isQuery + &quot;]&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这使得原来逻辑清晰的Ticket类变得杂乱不堪，由于setter和getter过多可能在初始化的时候你可能漏了用户的sex或则age没有填上。<br><img src="http://img.blog.csdn.net/20170816235040517?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>（翻不完的setter和getter）<br>于是我们创建一个对象信息的建造者，用来构建对象，在setter的时候我们return this这样使得可以链式调用，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public class PersonInfo &#123;</span><br><span class="line">	private String holdername;</span><br><span class="line">	private String sex;</span><br><span class="line">	private int age;</span><br><span class="line">	private String birthday;</span><br><span class="line">	private String address;</span><br><span class="line">	</span><br><span class="line">	public static class Builder&#123;</span><br><span class="line">		</span><br><span class="line">		private String holdername;</span><br><span class="line">		private String sex;</span><br><span class="line">		private int age;</span><br><span class="line">		private String birthday;</span><br><span class="line">		private String address;</span><br><span class="line">		</span><br><span class="line">		public Builder setHoldername(String holdername) &#123;</span><br><span class="line">			this.holdername = holdername;</span><br><span class="line">			return this;</span><br><span class="line">		&#125;</span><br><span class="line">		public Builder setSex(String sex) &#123;</span><br><span class="line">			this.sex = sex;</span><br><span class="line">			return this;</span><br><span class="line">		&#125;</span><br><span class="line">		public Builder setAge(int age) &#123;</span><br><span class="line">			this.age = age;</span><br><span class="line">			return this;</span><br><span class="line">		&#125;</span><br><span class="line">		public Builder setBirthday(String birthday) &#123;</span><br><span class="line">			this.birthday = birthday;</span><br><span class="line">			return this;</span><br><span class="line">		&#125;</span><br><span class="line">		public Builder setAddress(String address) &#123;</span><br><span class="line">			this.address = address;</span><br><span class="line">			return this;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		public PersonInfo create()&#123;</span><br><span class="line">			PersonInfo personInfo=new PersonInfo();</span><br><span class="line">			personInfo.holdername=this.holdername;</span><br><span class="line">			personInfo.sex=this.sex;</span><br><span class="line">			personInfo.age=this.age;</span><br><span class="line">			personInfo.birthday=this.birthday;</span><br><span class="line">			personInfo.address=this.address;</span><br><span class="line">		 return	personInfo;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return &quot;PersonInfo [holdername=&quot; + holdername + &quot;, sex=&quot; + sex + &quot;, age=&quot; + age + &quot;, birthday=&quot; + birthday</span><br><span class="line">				+ &quot;, address=&quot; + address + &quot;]&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Ticket类初始化的时候便写入的购票人信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.builder;</span><br><span class="line"></span><br><span class="line">public abstract class Ticket &#123;</span><br><span class="line">	protected String ticketname;</span><br><span class="line">	protected boolean isCheck=false;</span><br><span class="line">	protected boolean isPayed=false;</span><br><span class="line">	protected boolean isQuery=false;</span><br><span class="line">	</span><br><span class="line">	protected PersonInfo personInfo;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	public Ticket(PersonInfo personInfo) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.personInfo=personInfo;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	public abstract void  setTicketname();</span><br><span class="line"></span><br><span class="line">	public void setCheck(boolean isCheck) &#123;</span><br><span class="line">		this.isCheck = isCheck;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setPayed(boolean isPayed) &#123;</span><br><span class="line">		this.isPayed = isPayed;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public boolean isQuery() &#123;</span><br><span class="line">		return isQuery;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setQuery(boolean isQuery) &#123;</span><br><span class="line">		this.isQuery = isQuery;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return &quot;Ticket [ticketname=&quot; + ticketname + &quot;, personInfo=&quot; + personInfo.toString() +&quot;, isCheck=&quot; + isCheck + &quot;, isPayed=&quot; + isPayed + &quot;, isQuery=&quot;</span><br><span class="line">				+ isQuery  + &quot;]&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在调用的时候也十分的清晰</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">		PersonInfo xiaoshuangInfo=new PersonInfo.Builder()</span><br><span class="line">				.setHoldername(&quot;小双&quot;)</span><br><span class="line">				.setSex(&quot;women&quot;)</span><br><span class="line">				.setAge(18)</span><br><span class="line">				.setBirthday(&quot;2000-01-01&quot;)</span><br><span class="line">				.setAddress(&quot;旮旯&quot;)</span><br><span class="line">				.create();</span><br><span class="line">		TicketProgram.sellTicket(ticketSeller,xiaoshuangInfo);</span><br><span class="line">TicketProgram.sellTicket(busTicketSeller,xiaoshuangInfo);</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Ticket [ticketname=BusTicket, personInfo=PersonInfo [holdername=小双, sex=women, age=18, birthday=2000-01-01, address=旮旯], isCheck=true, isPayed=true, isQuery=true]</span><br><span class="line">Ticket [ticketname=TrainTicket, personInfo=PersonInfo [holdername=小双, sex=women, age=18, birthday=2000-01-01, address=旮旯], isCheck=true, isPayed=true, isQuery=true]</span><br></pre></td></tr></table></figure>
+<p>通过使用这个填充参数的填充模式使得Ticket对象的构建与表示分离。在填充模式中没有指挥官（Director）但是用于对象的构建还是搓搓有余。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>您的一份奖励,就是我的一份激励</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/14/singleton-pattern/" rel="next" title="(设计模式)单例模式">
+                <i class="fa fa-chevron-left"></i> (设计模式)单例模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/22/prototype-pattern/" rel="prev" title="(设计模式)原型模式">
+                (设计模式)原型模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是建造者模式"><span class="nav-number">1.</span> <span class="nav-text">什么是建造者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#经典模式"><span class="nav-number">2.</span> <span class="nav-text">经典模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#填充模式"><span class="nav-number">3.</span> <span class="nav-text">填充模式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

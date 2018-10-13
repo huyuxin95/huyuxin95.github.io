@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android优化," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="饥饿让人充满智慧  说到内存泄漏导致OOM(out of memory·)很多人都觉得和自己的应用遥不可及，现在市场上开始出现6G RAM，8 GRAM内存泄漏那么一点点又怎样？其每台android机在出厂时就已经配置了单个APP内存的最大可用内存，所以6G甚至8GRAM 除了分配的自留地，其他都是公家地盘，你并不能利用起来，我们可以通过adb命令来查看当前设备配置的可用内存大小 1234567">
+<meta name="keywords" content="Android优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(Android优化)跟内存泄漏说再见">
+<meta property="og:url" content="http://yoursite.com/2017/10/22/leak-memory/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="饥饿让人充满智慧  说到内存泄漏导致OOM(out of memory·)很多人都觉得和自己的应用遥不可及，现在市场上开始出现6G RAM，8 GRAM内存泄漏那么一点点又怎样？其每台android机在出厂时就已经配置了单个APP内存的最大可用内存，所以6G甚至8GRAM 除了分配的自留地，其他都是公家地盘，你并不能利用起来，我们可以通过adb命令来查看当前设备配置的可用内存大小 1234567">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20171021232842424?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171021233914524?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022004043772?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022004855760?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022005750361?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022012715848?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022015747800?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022020657122?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022020821475?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022023559215?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20171022023435813?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2018-10-13T02:46:43.156Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(Android优化)跟内存泄漏说再见">
+<meta name="twitter:description" content="饥饿让人充满智慧  说到内存泄漏导致OOM(out of memory·)很多人都觉得和自己的应用遥不可及，现在市场上开始出现6G RAM，8 GRAM内存泄漏那么一点点又怎样？其每台android机在出厂时就已经配置了单个APP内存的最大可用内存，所以6G甚至8GRAM 除了分配的自留地，其他都是公家地盘，你并不能利用起来，我们可以通过adb命令来查看当前设备配置的可用内存大小 1234567">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20171021232842424?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/10/22/leak-memory/"/>
+
+
+
+
+
+  <title>(Android优化)跟内存泄漏说再见 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/22/leak-memory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">(Android优化)跟内存泄漏说再见</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-22T02:45:38+08:00">
+                2017-10-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>饥饿让人充满智慧</p>
+</blockquote>
+<p>说到内存泄漏导致OOM(out of memory·)很多人都觉得和自己的应用遥不可及，现在市场上开始出现6G RAM，8 GRAM内存泄漏那么一点点又怎样？其每台android机在出厂时就已经配置了单个APP内存的最大可用内存，所以6G甚至8GRAM 除了分配的自留地，其他都是公家地盘，你并不能利用起来，我们可以通过adb命令来查看当前设备配置的可用内存大小</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//当配置了heapgrowthlimit的值时以heapgrowthlimit为准，heapsize</span><br><span class="line">//的值表示极限堆的大小，使得应用即使OOM也不会导致系统崩溃，但是一般超</span><br><span class="line">//过heapgrowthlimit大小就要报OOM了，应用也就崩溃了</span><br><span class="line">$adb shell getprop dalvik.vm.heapgrowthlimit</span><br><span class="line"></span><br><span class="line">320m</span><br><span class="line"></span><br><span class="line">$adb shell getprop dalvik.vm.heapsize</span><br><span class="line"></span><br><span class="line">512m</span><br></pre></td></tr></table></figure>
+<p>所以当应用不断运行不能被回收的内存越来越多，离OOM也就不远了.所以解决内存泄漏从而避免导致OOM刻不容缓。</p>
+<h2 id="什么是内存泄漏"><a href="#什么是内存泄漏" class="headerlink" title="什么是内存泄漏"></a>什么是内存泄漏</h2><p>当一个对象已经不需要再使用了，本该被回收时，而有另外一个正在使用的对象持有它的引用从而导致它不能被回收，这导致本该被回收的对象不能被回收而停留在堆内存中，这就产生了内存泄漏。</p>
+<h2 id="Android中常见的内存泄漏"><a href="#Android中常见的内存泄漏" class="headerlink" title="Android中常见的内存泄漏"></a><strong>Android中常见的内存泄漏</strong></h2><h2 id="1-内部类-匿名内部类持有外部类引用"><a href="#1-内部类-匿名内部类持有外部类引用" class="headerlink" title="1.内部类/匿名内部类持有外部类引用"></a>1.内部类/匿名内部类持有外部类引用</h2><p>首先：内部类和静态内部类有什么区别？那就是内部类持有外部类的引用，静态内部类不持有外部类引用<br>内部类在编译的时候和外部类会生成两个class文件，其中内部类会默认创建一个含有外部类的构造，我们在写内部类时访问外部类变量直接就可以访问，就是因为内部持有外部类的引用.那为什么静态内部类又不持有呢？这也很好理解，静态的内部类的创建不依赖外部类，如果持有外部类引用，当静态内部类被new出来的时候外部类还没初始化那就会造成空指针异常，弄清楚上面两点我们。我们平时都犯了什么错！</p>
+<ul>
+<li>1.Handler使用时的内存泄漏</li>
+</ul>
+<p>看代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">//当加载数据完毕需要更新界面数据</span><br><span class="line">Handler mhandler = new Handler() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void handleMessage(Message msg) &#123;</span><br><span class="line">        super.handleMessage(msg);</span><br><span class="line">        switch (msg.what) &#123;</span><br><span class="line">            case SUCCESS_LOAD:</span><br><span class="line">               //加载成功</span><br><span class="line">                break;</span><br><span class="line">            case FAIL_LOAD:</span><br><span class="line">	//加载失败</span><br><span class="line">                break;</span><br><span class="line">            case ERR_LOAD:</span><br><span class="line">	//加载失败</span><br><span class="line">                break;</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>我们平时创建handler就信手拈来，直接在Activity中创建匿名内部类的handler，在进入界面或则界面需要更新数据的时候来个网络请求，请求完将数据sendMessage给了handler，在handler中来更新UI，但是当数据到来的时候你这个当前的Activity还在吗？如果用户退出了当前Activity，那么被handler持有的外部类Activity将得不到释放.所以，得改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">private DataHandler mhandler=new DataHandler(this);</span><br><span class="line">//当加载数据完毕需要更新界面数据</span><br><span class="line">private static  class DataHandler extends Handler&#123;</span><br><span class="line">    private WeakReference&lt;Context&gt; wf_context;</span><br><span class="line">    </span><br><span class="line">    public DataHandler(Context context) &#123;</span><br><span class="line">        wf_context=new WeakReference&lt;Context&gt;(context);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    public void handleMessage(Message msg) &#123;</span><br><span class="line">        super.handleMessage(msg);</span><br><span class="line"></span><br><span class="line">        switch (msg.what) &#123;</span><br><span class="line">            //视频新闻加载成功</span><br><span class="line">            case SUCCESS_LOAD:</span><br><span class="line"></span><br><span class="line">                break;</span><br><span class="line">            //视频新闻加载失败</span><br><span class="line">            case FAIL_LOAD:</span><br><span class="line"></span><br><span class="line">                break;</span><br><span class="line">            case ERR_LOAD:</span><br><span class="line"></span><br><span class="line">                break;</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Override</span><br><span class="line">protected void onDestroy() &#123;</span><br><span class="line">    super.onDestroy();</span><br><span class="line">    mhandler.removeCallbacksAndMessages(null);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们将匿名内部类的handler改成静态内部类，因为我们可能要在handle中更改ui。所以我们将Context通过构造传入，在传入之后用弱引用WeakReference来包裹Context，使得当发生GC操作时弱应用持有的对象在GCRoot不可达的情况下被回收。我们甚至直接在onDestroy中执行<br>handler的removeCallbacksAndMessages来清空Looper中的消息.</p>
+<blockquote>
+<p>JAVA中有四种引用类型，详细介绍另找文献<br>StrongReference强引用，这是最为普遍的引用类型，当一个对象中依赖另一个对象这就是强引用类型，当程序内存不够时，程序甚至宁愿抛出OOM也不愿释放强引用<br>SoftReference软引用，被SoftReference包裹的引用在应用的内存不够用的时候将被释放<br>WeakReference弱引用，被WeakReference包裹的引用在发生GC操作并GCRoot不可达时被释放<br>PhantomReference虚引用，被PhantomReference包裹的引用时，你get()获取的对象总是为空。</p>
+</blockquote>
+<ul>
+<li>2.延时、耗时、异步操作</li>
+</ul>
+<p>我们从handler的例子可以看出，其实主要原因还是信息的加载不同同步的导致在消息到来时，持有的变量生命周期已经走完但是由于被handler强引用导致不能被GC回收。由此举一反三很多操作也是如此，如new Thread(),new AsyncTask，接口回调，如果在Activty中创建这些对象或执行这些操作，确保内部类是静态内部类，不管是否重新新建一个Class文件，确保其持有的外部变量能够被GC回收（比如用WeakRefrence包裹）</p>
+<h2 id="2-单例中的内存泄漏"><a href="#2-单例中的内存泄漏" class="headerlink" title="2.单例中的内存泄漏"></a>2.单例中的内存泄漏</h2><p>在创建单例时，很多时候我们都需要外部资源来帮助其初始化，比如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 用于返回一个VolleyController单例</span><br><span class="line">public static VolleyController getInstance(Context context) &#123;</span><br><span class="line">    if (mInstance == null) &#123;</span><br><span class="line">        synchronized(VolleyController.class)</span><br><span class="line">        &#123;</span><br><span class="line">            if (mInstance == null) &#123;</span><br><span class="line">                mInstance = new VolleyController(context);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return mInstance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很多时候单例的创建我们十分的随意，想起来就getInstance(this),仔细想想，如果在一个Activity，或则Service中创建了这个单例，当这个Activity或Service生命周期走完,那么持有的context将被泄漏，对于传入Context我们可以这样改<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 用于返回一个VolleyController单例</span><br><span class="line">public static VolleyController getInstance(Context context) &#123;</span><br><span class="line">    if (mInstance == null) &#123;</span><br><span class="line">        synchronized(VolleyController.class)</span><br><span class="line">        &#123;</span><br><span class="line">            if (mInstance == null) &#123;</span><br><span class="line">                mInstance = new VolleyController(context.getApplicationContext());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return mInstance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样使得不管传入什么Conetxt，持有的都将是ApplicationContext，而Application存活在整个应用的生命周期中所以Application不会需要被回收除非应用结束。对于单例还有个建议就是如果单例的初始化不是特别消耗资源和耗时可以放在Application中先初始化好。</p>
+<h2 id="3-资源未被释放"><a href="#3-资源未被释放" class="headerlink" title="3.资源未被释放"></a>3.资源未被释放</h2><p>我们在注册广播registerReceiver之后android都会要求我们在onDestroy中执行unregisterReceiver来释放资源，在我们的编程中也是这样，比如BraodcastReceiver，ContentObserver，File，Cursor，Stream，Bitmap等资源的使用，应该在Activity销毁时或直接是使用完时及时关闭或者注销，否则这些资源将不会被回收，造成内存泄漏。这也包括监听，我们写接口回调来监听却很少人执行removeListener(),所以在onDestroy时执行反监听操作是十分必要的。</p>
+<h2 id="4-非静态内部类创建静态实例造成的内存泄漏"><a href="#4-非静态内部类创建静态实例造成的内存泄漏" class="headerlink" title="4.非静态内部类创建静态实例造成的内存泄漏"></a>4.非静态内部类创建静态实例造成的内存泄漏</h2><p>很多时候为了方便在静态方法中调用或则是别的类中调用，我们很可能会写出这样的代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line">    private static ResourceInit mResource = null;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        if(mResource == null)&#123;</span><br><span class="line">            mResource = new ResourceInit ();</span><br><span class="line">        &#125;</span><br><span class="line">        //...</span><br><span class="line">    &#125;</span><br><span class="line">    class ResourceInit &#123;</span><br><span class="line">        //...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样每当Activity再次进入那么就会new一个新的对象，并且这个对象将得不到回收，如果非要这样做，可以把内部类声明为静态内部类，或则将其另创一个类实现单例模式，<br>上面就是几种常见的内存泄漏了。</p>
+<h2 id="内存泄漏的查找"><a href="#内存泄漏的查找" class="headerlink" title="内存泄漏的查找"></a><strong>内存泄漏的查找</strong></h2><p>人非圣贤，所以除了在写代码的时候注意内存泄漏更重要的是找出内存泄漏的地方。</p>
+<h2 id="1-初步排查"><a href="#1-初步排查" class="headerlink" title="1.初步排查"></a>1.初步排查</h2><p><strong>1.1利用日志初步判断</strong><br><img src="http://img.blog.csdn.net/20171021232842424?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>运行应用后，在DDMS或Android Device Monitor中设备选中需要调试的应用，然后点击GC按钮手动触发GC再操作应用回到之前的界面后再次点击GC操作异常反复多次我们在Logcat中过滤GC日志可以看到（因为只有GC不能回收的内存才能算是泄漏了）<br><img src="http://img.blog.csdn.net/20171021233914524?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<blockquote>
+<p>类似上面logcat打印一样，触发垃圾回收的主要原因有以下几种：<br>GC_MALLOC——内存分配失败时触发；<br>GC_CONCURRENT——当分配的对象大小超过384K时触发；<br>GC_EXPLICIT——对垃圾收集的显式调用(System.gc()) ；<br>GC_EXTERNAL_ALLOC——外部内存分配失败时触发；</p>
+</blockquote>
+<p>其中我们手动触发的GC类型为GC_EXPLICIT<br>我们看到最后一条日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Explicit concurrent mark sweep GC freed 8705(576KB) AllocSpace objects, 22(3MB) LOS objects, 29% free, 9MB/13MB, paused 549us total 10.308ms</span><br></pre></td></tr></table></figure>
+<p>我们可以看到最后一次释放了AllocSpace 对象8705共576KB，LOS(Large Object Space) objects 22个共3MB ，已用9MB共,13MB可用29% 。在回收时主线程暂停了549us 耗时10.308ms<br>我们可以从以上几条日志看出可用空间越来越小，但是我们还是在之前的页面所以初步判定可能存在内存泄漏！<br><strong>1.2查看对象个数变化</strong><br><img src="http://img.blog.csdn.net/20171022004043772?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>运行程序，操作运用，回到某个界面点击GC，然后点击旁边的 Ssytem info选择Memory Usage 多次操作比较多个生成文件的Object个数，观看Activty,APPContext等的个数，因为一般都是Activity和Context内存泄漏了</p>
+<h2 id="2-利用hprof文件进一步排查"><a href="#2-利用hprof文件进一步排查" class="headerlink" title="2.利用hprof文件进一步排查"></a>2.利用hprof文件进一步排查</h2><p><img src="http://img.blog.csdn.net/20171022004855760?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>操作应用，回到之前界面，点击GC回收一波内存，点击dump java heap按钮，生成hprof文件<br><img src="http://img.blog.csdn.net/20171022005750361?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>我们可以根据自己的习惯选择查看方式，比如现在是App Heap仅看APP的内存分配，package tree view包的树状图，下面出现了对应的类，上面的描述分别是<br>列名 | 描述<br>—-|——<br>Class Name| 类名，Heap中的所有Class<br>Heap Count     | 堆内存中这个类 对象的个数<br>Sizeof    | 每个该实例占用的内存大小<br>Shallow Size| 所有该类的实例占用的内存大小<br>Retained Size| 所有该类对象被释放掉，会释放多少内存<br>我们可以看到多个Activty的个数大于1，所以很明显内存泄漏了，我们点击其中一个NewsActivity可以到右侧显示了详细信息<br>列名 | 描述<br>—-|——<br>Instance    | 该类的实例<br>Depth | 深度, 从任一GC Root点到该实例的最短路径<br>Dominating Size    | 该实例可支配的内存大小<br>我们分别点击可以看到第二个的详细信息，很明显现在News_Pageadapter这个类的内部类MyThread中context发生了内存泄漏，选中右键，选择jump to source</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">//图片轮播的线程</span><br><span class="line">class MyThread extends Thread &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        super.run();</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            while (!isstop) &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    sleep(4500);</span><br><span class="line">                    index++;</span><br><span class="line">                    handler.sendEmptyMessage(R.id.image_thread);</span><br><span class="line"></span><br><span class="line">                &#125; catch (Exception e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到这里就很明显了，一个线程的内部类持有了外部类的引用使得Activity退出时GC没能将其回收。</p>
+<h2 id="3-利用MAT分析"><a href="#3-利用MAT分析" class="headerlink" title="3.利用MAT分析"></a>3.利用MAT分析</h2><p>如果你没能分析出来也可以借助另一个工具MAT,这是一个Eclipse的插件，可以单独安装（<a href="http://eclipse.org/mat/downloads.php" target="_blank" rel="noopener">点击下载</a>）这是用来分析Java的内存信息，我们可以在Android Studio中点击Captures找到刚才生成的hprof文件，MAT只能识别标准的hprof文件我们需要在这转换，并保存他<br><img src="http://img.blog.csdn.net/20171022012715848?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>用下载好的MAT打开<br><img src="http://img.blog.csdn.net/20171022015747800?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>其中常用的有直方图（Histogram），Dominator Tree(支配树）在他们的第一行是检索输入框，支持正则表达式，我们输入之前的NewsActivity在直方图和支配树中都可以看到有两个实例<br>我们右键其中一个可以看到很多的菜单供选择<br> List objects with （以Dominator Tree的方式查看）</p>
+<ul>
+<li>incoming references 引用到该对象的对象</li>
+<li>outcoming references 被该对象引用的对象<br>Show objects by class（以class的方式查看）</li>
+<li>incoming references 引用到该对象的对象</li>
+<li>outcoming references被该对象引用的对象<br>我们右键选择exclude all phantom/weak/soft etc.references, 意思是查看排除虚引用/弱引用/软引用等的引用链 （这些引用最终都能够被GC干掉，所以排除）<br><img src="http://img.blog.csdn.net/20171022020657122?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>我们可以看到结果和之前分析的一样<br><img src="http://img.blog.csdn.net/20171022020821475?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>相对于Android Atudio自带的分析工具MAT具有更加强大的功能，适用于复杂的情况来跟踪内存泄漏的痕迹。<br>4.Leakcanary<br>相对于上面一个个精确的查找分析，在APP优化的初期我还是更加倾向于第三方库Leakcanary，Leakcanary是大名鼎鼎的Square的开源项目，使用Leakcanary，当有内存泄漏时，会直观的在手机通知栏显示，并可点击进去查看详情<br>配置<br>在项目的build.gradle文件添加：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">   debugCompile &apos;com.squareup.leakcanary:leakcanary-android:1.3&apos;</span><br><span class="line">   releaseCompile &apos;com.squareup.leakcanary:leakcanary-android-no-op:1.3&apos;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>在自定义的Application中初始化（别忽略了在清单文件中配置自定义的Application）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class App extends LitePalApplication&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void onCreate() &#123;</span><br><span class="line">        super.onCreate();</span><br><span class="line">        LeakCanary.install(this);</span><br></pre></td></tr></table></figure></p>
+<p>}<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果你想观察Fragment的内存泄露需要这样改下：</span><br></pre></td></tr></table></figure></p>
+<p>private RefWatcher refWatcher;<br>public static RefWatcher getRefWatcher(Context context) {<br>        App application = (App) context.getApplicationContext();<br>        return application.refWatcher;<br>    }</p>
+<p>public class App extends LitePalApplication{<br>    @Override<br>    public void onCreate() {<br>        super.onCreate();<br>        LeakCanary.install(this);<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在Fragment中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public abstract class BaseFragment extends Fragment &#123;</span><br><span class="line"></span><br><span class="line">  @Override public void onDestroy() &#123;</span><br><span class="line">    super.onDestroy();</span><br><span class="line">    RefWatcher refWatcher = APP.getRefWatcher(getActivity());</span><br><span class="line">    refWatcher.watch(this);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置完成直接运行之前的APP，当有内存泄漏时他会在通知栏弹出（需要注意的是，这不是实时的，可能会有好几秒的延迟，因为他的原理也是分析生成的hprof文件，耗时可能比较长）<br><img src="http://img.blog.csdn.net/20171022023559215?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>我们点击进去可以查看内存泄漏详情<br><img src="http://img.blog.csdn.net/20171022023435813?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>很明显这是在代码中让AudioManager强引用了VedioNewsDetailActivity</p>
+<p>内存泄漏分析基础大概就是这些了，可以解决大多数的内存泄漏问题.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>您的一份奖励,就是我的一份激励</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android优化/" rel="tag"># Android优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/18/replace-hashmap/" rel="next" title="(Android优化)使用SparseArray和ArrayMap代替HashMap">
+                <i class="fa fa-chevron-left"></i> (Android优化)使用SparseArray和ArrayMap代替HashMap
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/22/proxy-android/" rel="prev" title="(设计模式)代理模式在Android中的使用">
+                (设计模式)代理模式在Android中的使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是内存泄漏"><span class="nav-number">1.</span> <span class="nav-text">什么是内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android中常见的内存泄漏"><span class="nav-number">2.</span> <span class="nav-text">Android中常见的内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-内部类-匿名内部类持有外部类引用"><span class="nav-number">3.</span> <span class="nav-text">1.内部类/匿名内部类持有外部类引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-单例中的内存泄漏"><span class="nav-number">4.</span> <span class="nav-text">2.单例中的内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-资源未被释放"><span class="nav-number">5.</span> <span class="nav-text">3.资源未被释放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-非静态内部类创建静态实例造成的内存泄漏"><span class="nav-number">6.</span> <span class="nav-text">4.非静态内部类创建静态实例造成的内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存泄漏的查找"><span class="nav-number">7.</span> <span class="nav-text">内存泄漏的查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-初步排查"><span class="nav-number">8.</span> <span class="nav-text">1.初步排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-利用hprof文件进一步排查"><span class="nav-number">9.</span> <span class="nav-text">2.利用hprof文件进一步排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-利用MAT分析"><span class="nav-number">10.</span> <span class="nav-text">3.利用MAT分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

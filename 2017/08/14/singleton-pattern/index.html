@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="设计模式," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="第一篇:单例模式  单例模式是大家最为熟悉的设计模式也是大多数程序员接触的第一种设计模式,但是要真的去全面了解一波单例模式还是要点时间. 什么是单例:确保某一个类在全局只有一个实例,最为常见的的场景就是全局变量以及全局的工具类,重复创建带来资源与性能的浪费.那么创建单例模式需要注意什么呢?  重写构造函数并声明为私有(private); 通过静态方法或者枚举返回单例对象; 确保全局至多只有一个对">
+<meta name="keywords" content="设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(设计模式)单例模式">
+<meta property="og:url" content="http://yoursite.com/2017/08/14/singleton-pattern/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="第一篇:单例模式  单例模式是大家最为熟悉的设计模式也是大多数程序员接触的第一种设计模式,但是要真的去全面了解一波单例模式还是要点时间. 什么是单例:确保某一个类在全局只有一个实例,最为常见的的场景就是全局变量以及全局的工具类,重复创建带来资源与性能的浪费.那么创建单例模式需要注意什么呢?  重写构造函数并声明为私有(private); 通过静态方法或者枚举返回单例对象; 确保全局至多只有一个对">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-13T03:01:27.641Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(设计模式)单例模式">
+<meta name="twitter:description" content="第一篇:单例模式  单例模式是大家最为熟悉的设计模式也是大多数程序员接触的第一种设计模式,但是要真的去全面了解一波单例模式还是要点时间. 什么是单例:确保某一个类在全局只有一个实例,最为常见的的场景就是全局变量以及全局的工具类,重复创建带来资源与性能的浪费.那么创建单例模式需要注意什么呢?  重写构造函数并声明为私有(private); 通过静态方法或者枚举返回单例对象; 确保全局至多只有一个对">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/14/singleton-pattern/"/>
+
+
+
+
+
+  <title>(设计模式)单例模式 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/14/singleton-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">(设计模式)单例模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-14T18:02:28+08:00">
+                2017-08-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>第一篇:单例模式</p>
+</blockquote>
+<p>单例模式是大家最为熟悉的设计模式也是大多数程序员接触的第一种设计模式,但是要真的去全面了解一波单例模式还是要点时间.</p>
+<h2 id="什么是单例"><a href="#什么是单例" class="headerlink" title="什么是单例:"></a>什么是单例:</h2><p>确保某一个类在全局只有一个实例,最为常见的的场景就是全局变量以及全局的工具类,重复创建带来资源与性能的浪费.那么创建单例模式需要注意什么呢?</p>
+<ol>
+<li>重写构造函数并声明为私有(private);</li>
+<li>通过静态方法或者枚举返回单例对象;</li>
+<li>确保全局至多只有一个对象,尤其在多线程高并发的情况下;</li>
+<li>确保单例对象在反序列化的时候也不会重新创建新的对象;</li>
+</ol>
+<p>从单例的实现,前人又将其分为多种类型,我们来分析一波他们的优劣:</p>
+<h2 id="饿汉模式"><a href="#饿汉模式" class="headerlink" title="饿汉模式:"></a><b>饿汉模式:</b></h2><p>我们知道在一个国家里面国王只有一个,大臣可以有多个,我们就拿这个来举例说明:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line">/**</span><br><span class="line"> * 饿汉模式</span><br><span class="line"> */</span><br><span class="line">public class King extends Person &#123;</span><br><span class="line">	private static final King king=new King();</span><br><span class="line">	private King() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	public static King getInstance() &#123;</span><br><span class="line">		return king;</span><br><span class="line">	&#125;</span><br><span class="line">	@Override</span><br><span class="line">	public void work() &#123;</span><br><span class="line">		System.out.println(&quot;just say hello&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line">public class Minister extends Person &#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void work() &#123;</span><br><span class="line">		System.out.println(&quot;do everything&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line"></span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		King king = King.getInstance();</span><br><span class="line">		King king2  = King.getInstance();</span><br><span class="line">		</span><br><span class="line">		Minister minister=new Minister();</span><br><span class="line">		Minister minister2=new Minister();</span><br><span class="line">		</span><br><span class="line">		System.out.println(&quot;king:&quot;+king);</span><br><span class="line">		System.out.println(&quot;king2:&quot;+king2);</span><br><span class="line">		System.out.println(&quot;minister:&quot;+minister);</span><br><span class="line">		System.out.println(&quot;minister2:&quot;+minister2);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以看下因为King的构造器被声明为private,我们只能通过静态方法getInstance来获取King的对象,而Minister则可以通过构造来new获得.通过内存地址的打印,我们可以判断出他们是否是同一个对象,结果显而易见:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">king:top.huyuxin.singleton.King@770848b9</span><br><span class="line">king2:top.huyuxin.singleton.King@770848b9</span><br><span class="line">minister:top.huyuxin.singleton.Minister@40dea6bc</span><br><span class="line">minister2:top.huyuxin.singleton.Minister@5994a1e9</span><br></pre></td></tr></table></figure>
+<h2 id="懒汉模式"><a href="#懒汉模式" class="headerlink" title="懒汉模式"></a><b>懒汉模式</b></h2><p>在分析饿汉模式之前我们先来看下懒汉模式,再来分析这是两个最为简单实现:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line">/**</span><br><span class="line"> * 懒汉模式</span><br><span class="line"> */</span><br><span class="line">public class King extends Person &#123;</span><br><span class="line">	</span><br><span class="line">	private static King king;</span><br><span class="line">	private King() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	public static King getInstance() &#123;</span><br><span class="line">		if(king==null)&#123;</span><br><span class="line">			king=new King();</span><br><span class="line">		&#125;</span><br><span class="line">		return king;</span><br><span class="line">	&#125;</span><br><span class="line">	@Override</span><br><span class="line">	public void work() &#123;</span><br><span class="line">		System.out.println(&quot;just say hello&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>就像名字一样饿汉模式一上来就直接创建一个对象,不管你要不要,懒汉模式则是你需要才会创建对象.这样在初始化内容比较少时我们可以考虑饿汉模式,这样可以在初始化时便可得到,在后面使用方便,如果初始化内容比较多那么可以放在后面需要的时候初始化,以免初始化后面却没用到,浪费资源.<br>有的同学说,当两个线程同时来获取单例对象上面的都不能保证获取到的是同一个,getInstance()方法不是一个原子操作.<br>懒汉模式的改进:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line">/**</span><br><span class="line"> * 改良懒汉模式</span><br><span class="line"> */</span><br><span class="line">public class King extends Person &#123;</span><br><span class="line">	</span><br><span class="line">	private static King king;</span><br><span class="line">	private King() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	public static synchronized King getInstance() &#123;</span><br><span class="line">		if(king==null)&#123;</span><br><span class="line">			king=new King();</span><br><span class="line">		&#125;</span><br><span class="line">		return king;</span><br><span class="line">	&#125;</span><br><span class="line">	@Override</span><br><span class="line">	public void work() &#123;</span><br><span class="line">		System.out.println(&quot;just say hello&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将getInstance()用声明为synchronized同步操作,这样能一定程度的避免多线程同时获取单例对象的问题,但是却还不够并且每次执行getInstance()方法都是一个同步操作,这是不能忍受的.并且在高并发下这种方式也是形同虚设.我们下面会分析.</p>
+<h2 id="Double-Check-Lock-DCL-模式"><a href="#Double-Check-Lock-DCL-模式" class="headerlink" title="Double Check Lock(DCL)模式"></a><b>Double Check Lock(DCL)模式</b></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line">/**</span><br><span class="line"> - DCL模式</span><br><span class="line"> */</span><br><span class="line">public class King extends Person &#123;</span><br><span class="line">	</span><br><span class="line">	private static King king;</span><br><span class="line">	private King() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	public static King getInstance() &#123;</span><br><span class="line">		if(king==null)&#123;</span><br><span class="line">			synchronized (King.class) &#123;</span><br><span class="line">				if(king==null)&#123;</span><br><span class="line">					king=new King();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return king;</span><br><span class="line">	&#125;</span><br><span class="line">	@Override</span><br><span class="line">	public void work() &#123;</span><br><span class="line">		System.out.println(&quot;just say hello&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过两层的判空,从而使得当单例对象不为空时不用被加锁直接返回,里面那层判空则是为了确保king在为空才会new,很多人会说,这不是多此一举吗?外层不是已经判空了?这主要是 king=new King();操作不是原子操作,这一句代码在编译成汇编指令时大致分为三步:</p>
+<ul>
+<li>给单例的实例分配内存</li>
+<li>通过调用单例的构造,初始化成员字段</li>
+<li>将单例对象指向分配的内存空间(这里单例对象已经不为空)<br>但是由于编译器允许处理器乱序执行,以及java1.5之前JVM(java内存模型)中对于二三步写入的顺序是无法保证的,所以还是有可能导致DCL失效,这是让人十分难以接受的,于是我们想到了一个关键字volatile,声明单例对象的时候,将其用volatile修饰,如    private volatile static King king;那么我们通过修改得到是相对于完善的DCL模式.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line">/**</span><br><span class="line"> * DCL模式</span><br><span class="line"> */</span><br><span class="line">public class King extends Person &#123;</span><br><span class="line">	</span><br><span class="line">	private volatile static King king =null;</span><br><span class="line">	private King() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	public static King getInstance() &#123;</span><br><span class="line">		if(king==null)&#123;</span><br><span class="line">			synchronized (King.class) &#123;</span><br><span class="line">				if(king==null)&#123;</span><br><span class="line">					king=new King();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return king;</span><br><span class="line">	&#125;</span><br><span class="line">	@Override</span><br><span class="line">	public void work() &#123;</span><br><span class="line">		System.out.println(&quot;just say hello&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过DCL模式我们能一定程度的解决资源消耗,多余同步,线程安全问题.但是通过volatile来修饰单例对象从而达到一种打补丁式的一定程度的修复DCL失效的问题,这是让人十分难受的.</p>
+<h2 id="静态内部类单例模式"><a href="#静态内部类单例模式" class="headerlink" title="静态内部类单例模式"></a><b>静态内部类单例模式</b></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line">/**</span><br><span class="line"> * 静态内部类单例模式</span><br><span class="line"> */</span><br><span class="line">public class King extends Person &#123;</span><br><span class="line">	private King() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	public static King getInstance()&#123;</span><br><span class="line">		return KingHolder.mInstance;</span><br><span class="line">	&#125;</span><br><span class="line">	private static class KingHolder&#123;</span><br><span class="line">		private static final King mInstance=new King();</span><br><span class="line">	&#125;</span><br><span class="line">	@Override</span><br><span class="line">	public void work() &#123;</span><br><span class="line">		System.out.println(&quot;just say hello&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过这种方式避免了懒汉模式那种类加载就被初始化的尴尬处境,只有在调用getInstance的时候才会获取单例对象.这种方式既能保证线程安全,也使得单例的初始化进程得以推迟,初始化时序可控.但是这种就完美了吗?no..no..no..!<br>在工作中将对象序列化用户网络传输与持久化是十分常见的场景,我们将King实现(implements) Serializable接口,然后将其序列化后保存到文件(持久化),再通过反序列化,将文件内的对象再读取出来,看下还是不是同一个对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">*对象的序列化与反序列化</span><br><span class="line">**/</span><br><span class="line">public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException &#123;</span><br><span class="line">		</span><br><span class="line">	        File file = new File(&quot;king.txt&quot;);  </span><br><span class="line">	        ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(file));  </span><br><span class="line">	        oout.writeObject(King.getInstance()); // 保存单例对象  </span><br><span class="line">	        oout.close();  </span><br><span class="line">	 </span><br><span class="line">	        ObjectInputStream oin = new ObjectInputStream(new FileInputStream(file));  </span><br><span class="line">	        Object newKing = oin.readObject();  </span><br><span class="line">	        oin.close();  </span><br><span class="line">	        System.out.println(King.getInstance()); </span><br><span class="line">	        System.out.println(newKing);  </span><br><span class="line">	 </span><br><span class="line">	        System.out.println(King.getInstance() == newKing); </span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>结果却是让人失望的:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">top.huyuxin.singleton.King@336bc75c</span><br><span class="line">top.huyuxin.singleton.King@46af2a50</span><br><span class="line">false</span><br></pre></td></tr></table></figure>
+<p>他们不是同一个对象,这就让我想到了,把乌鸡国国王藏到井里.跳出个妖精.可怕可怕!<br>那能改吗?当然能,java支持自定义的序列化与反序列化,最简单的方式就是重写readResolve()方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.singleton;</span><br><span class="line"></span><br><span class="line">import java.io.ObjectStreamException;</span><br><span class="line">import java.io.Serializable;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 静态内部类单例模式优化版</span><br><span class="line"> */</span><br><span class="line">public class King extends Person implements Serializable &#123;</span><br><span class="line">	private King() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static King getInstance()&#123;</span><br><span class="line">		return KingHolder.mInstance;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	private static class KingHolder&#123;</span><br><span class="line">		private static final King mInstance=new King();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	 private Object readResolve() throws ObjectStreamException &#123;  </span><br><span class="line">	        return KingHolder.mInstance;  </span><br><span class="line">	 &#125; </span><br><span class="line">	</span><br><span class="line">	@Override</span><br><span class="line">	public void work() &#123;</span><br><span class="line">		System.out.println(&quot;just say hello&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果就是可以了,即使反序列化也是同一个国王.完美!完美??呸这和之前的用volatile修饰单例对象有什么区别?不过话说回来,静态内部类方式是推荐的单例实现方案.</p>
+<h2 id="枚举单例模式"><a href="#枚举单例模式" class="headerlink" title="枚举单例模式"></a><b>枚举单例模式</b></h2><p>我们在序列化对象的时候我们会发现在除了基础数据类型之外,String,数组,Enum,或者实现Serializable接口可以被序列化,从java的序列化部分实现代码就可以看出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private void writeObject0(Object obj, boolean unshared) throws IOException &#123;  </span><br><span class="line">      ...</span><br><span class="line">    if (obj instanceof String) &#123;  </span><br><span class="line">        writeString((String) obj, unshared);  </span><br><span class="line">    &#125; else if (cl.isArray()) &#123;  </span><br><span class="line">        writeArray(obj, desc, unshared);  </span><br><span class="line">    &#125; else if (obj instanceof Enum) &#123;  </span><br><span class="line">        writeEnum((Enum) obj, desc, unshared);  </span><br><span class="line">    &#125; else if (obj instanceof Serializable) &#123;  </span><br><span class="line">        writeOrdinaryObject(obj, desc, unshared);  </span><br><span class="line">    &#125; else &#123;  </span><br><span class="line">        if (extendedDebugInfo) &#123;  </span><br><span class="line">            throw new NotSerializableException(cl.getName() + &quot;\n&quot; </span><br><span class="line">                    + debugInfoStack.toString());  </span><br><span class="line">        &#125; else &#123;  </span><br><span class="line">            throw new NotSerializableException(cl.getName());  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    ...  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而我们知道Enum(枚举)这种类型比较有意思,就是他就像类一样可以有自己的字段以及方法,那么就用枚举来实现序列化不是可以防止出现反序列化new新的单例对象的问题?是的.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 枚举单例</span><br><span class="line"> */</span><br><span class="line">public enum King  &#123;</span><br><span class="line">	INSTANCE;</span><br><span class="line">	public static  int age;</span><br><span class="line">	public  static void work()&#123;</span><br><span class="line">		System.out.println(&quot;age: &quot;+age);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>简洁,线程安全.即使反序列化也是同一个对象,问题就是里面的字段和方法得是静态的.而且因为是单继承,Enum(枚举)类型是已经默认继承了Enum.所以不能继承其他类.日!!!!!!!!!!!!!!!!!!!!!!!</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>您的一份奖励,就是我的一份激励</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/19/apk-shell/" rel="next" title="Apk源码的加固(加壳)原理解析和实现">
+                <i class="fa fa-chevron-left"></i> Apk源码的加固(加壳)原理解析和实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/17/builder-pattern/" rel="prev" title="(设计模式)建造者模式">
+                (设计模式)建造者模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是单例"><span class="nav-number">1.</span> <span class="nav-text">什么是单例:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#饿汉模式"><span class="nav-number">2.</span> <span class="nav-text">饿汉模式:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#懒汉模式"><span class="nav-number">3.</span> <span class="nav-text">懒汉模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Double-Check-Lock-DCL-模式"><span class="nav-number">4.</span> <span class="nav-text">Double Check Lock(DCL)模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态内部类单例模式"><span class="nav-number">5.</span> <span class="nav-text">静态内部类单例模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#枚举单例模式"><span class="nav-number">6.</span> <span class="nav-text">枚举单例模式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

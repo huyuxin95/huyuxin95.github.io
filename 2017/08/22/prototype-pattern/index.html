@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="设计模式," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="第三篇:原型模式  什么是原型模式定义:用原型实例指定创建对象的种类,并通过拷贝这些原型创建新的对象.原型模式顾名思义也就是说是有一个样板的,以这个样板为原型.开发者从这个样板对象中复制出一个内部属性一致的对象.原型模式多用于创建复杂的或者构造耗时的对象,因此使用原型模式可以使得应用程序运行更加的高效. 经典模式我们在说原型模式时先简易的实现一下原型模式,假设我们需要打印一份报纸,报纸这东西,总">
+<meta name="keywords" content="设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(设计模式)原型模式">
+<meta property="og:url" content="http://yoursite.com/2017/08/22/prototype-pattern/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="第三篇:原型模式  什么是原型模式定义:用原型实例指定创建对象的种类,并通过拷贝这些原型创建新的对象.原型模式顾名思义也就是说是有一个样板的,以这个样板为原型.开发者从这个样板对象中复制出一个内部属性一致的对象.原型模式多用于创建复杂的或者构造耗时的对象,因此使用原型模式可以使得应用程序运行更加的高效. 经典模式我们在说原型模式时先简易的实现一下原型模式,假设我们需要打印一份报纸,报纸这东西,总">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20170822152616232?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20170822154326677?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20170822160953068?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2018-10-13T02:54:24.058Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(设计模式)原型模式">
+<meta name="twitter:description" content="第三篇:原型模式  什么是原型模式定义:用原型实例指定创建对象的种类,并通过拷贝这些原型创建新的对象.原型模式顾名思义也就是说是有一个样板的,以这个样板为原型.开发者从这个样板对象中复制出一个内部属性一致的对象.原型模式多用于创建复杂的或者构造耗时的对象,因此使用原型模式可以使得应用程序运行更加的高效. 经典模式我们在说原型模式时先简易的实现一下原型模式,假设我们需要打印一份报纸,报纸这东西,总">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20170822152616232?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/22/prototype-pattern/"/>
+
+
+
+
+
+  <title>(设计模式)原型模式 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/22/prototype-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">(设计模式)原型模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-22T17:20:20+08:00">
+                2017-08-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>第三篇:原型模式</p>
+</blockquote>
+<h2 id="什么是原型模式"><a href="#什么是原型模式" class="headerlink" title="什么是原型模式"></a>什么是原型模式</h2><p><b>定义:用原型实例指定创建对象的种类,并通过拷贝这些原型创建新的对象.</b>原型模式顾名思义也就是说是有一个样板的,以这个样板为原型.开发者从这个样板对象中复制出一个内部属性一致的对象.原型模式多用于创建复杂的或者构造耗时的对象,因此使用原型模式可以使得应用程序运行更加的高效.</p>
+<h2 id="经典模式"><a href="#经典模式" class="headerlink" title="经典模式"></a><b>经典模式</b></h2><p>我们在说原型模式时先简易的实现一下原型模式,假设我们需要打印一份报纸,报纸这东西,总不能每打一份就new一次吧.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.prototypemodel;</span><br><span class="line"></span><br><span class="line">public class Newspaper implements Cloneable &#123;</span><br><span class="line">	</span><br><span class="line">	private int id;//编号</span><br><span class="line">	private String title;//标题</span><br><span class="line">	private String data;</span><br><span class="line">	private Article article;</span><br><span class="line">	</span><br><span class="line">	public Newspaper() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Newspaper(int id, String title, String data, Article article) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.id = id;</span><br><span class="line">		this.title = title;</span><br><span class="line">		this.data = data;</span><br><span class="line">		this.article = article;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getId() &#123;</span><br><span class="line">		return id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setId(int id) &#123;</span><br><span class="line">		this.id = id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getTitle() &#123;</span><br><span class="line">		return title;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setTitle(String title) &#123;</span><br><span class="line">		this.title = title;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getData() &#123;</span><br><span class="line">		return data;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setData(String data) &#123;</span><br><span class="line">		this.data = data;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public Article getArticle() &#123;</span><br><span class="line">		return article;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setArticle(Article article) &#123;</span><br><span class="line">		this.article = article;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		return super.clone();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	public void print() &#123;</span><br><span class="line">		System.out.println(&quot;Newspaper [id=&quot; + id + &quot;, title=&quot; + title + &quot;, data=&quot; + data + &quot;, article=&quot; + article + &quot;]&quot;); </span><br><span class="line">	&#125;	</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中Article类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.prototypemodel;</span><br><span class="line"></span><br><span class="line">public class Article &#123;</span><br><span class="line">	private String author;</span><br><span class="line">	private String art_title;</span><br><span class="line">	private String countent;</span><br><span class="line">	</span><br><span class="line">	public Article() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public Article(String author, String art_title, String countent) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.author = author;</span><br><span class="line">		this.art_title = art_title;</span><br><span class="line">		this.countent = countent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getAuthor() &#123;</span><br><span class="line">		return author;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setAuthor(String author) &#123;</span><br><span class="line">		this.author = author;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getArt_title() &#123;</span><br><span class="line">		return art_title;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setArt_title(String art_title) &#123;</span><br><span class="line">		this.art_title = art_title;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getCountent() &#123;</span><br><span class="line">		return countent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setCountent(String countent) &#123;</span><br><span class="line">		this.countent = countent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return &quot;Article [author=&quot; + author + &quot;, art_title=&quot; + art_title + &quot;, countent=&quot; + countent + &quot;]&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Newspaper [id=1, title=it news, data=0822, article=Article [author=simon, art_title=prototypemodel, countent=good good study!day day up]]</span><br><span class="line">Newspaper [id=1, title=it news, data=0822, article=Article [author=simon, art_title=prototypemodel, countent=good good study!day day up]]</span><br><span class="line">newspaper:top.huyuxin.prototypemodel.Newspaper@642b6fc7</span><br><span class="line">newspaper2:top.huyuxin.prototypemodel.Newspaper@5fb7a531</span><br></pre></td></tr></table></figure>
+<p>上面是最最简易版的原型模式,上面还是有很多问题需要解决,在解决之前我们来看两个知识点:<br>Coloneable与浅复制与深复制</p>
+<h2 id="Coloneable"><a href="#Coloneable" class="headerlink" title="Coloneable"></a>Coloneable</h2><p>现在说原型模式之前我们先说说Coloneable这个接口,我们知道在java中有Coloneable这个接口用于标识当前对象是否是可克隆的,但是Coloneable这个接口里并没有抽象方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/*Cloneable接口源代码，JDK1.8*/  </span><br><span class="line">public interface Cloneable &#123;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>并且clone()这个未实现的方法是在Object下的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/*Object类中clone()方法的定义*/  </span><br><span class="line">protected native Object clone() throws CloneNotSupportedException;</span><br></pre></td></tr></table></figure>
+<p>也就是任何的对象都可以通过重写Object的clone()方法来调用.但是这是需要注意的javadoc上写到,也就是说如果没有implement Coloneable而调用 clone()方法是会抛出CloneNotSupportedException异常的.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;Invoking Object&apos;s clone method on an instance that does not implement the Cloneable interface results in the exception CloneNotSupportedException being thrown. JDK1.8&quot;</span><br></pre></td></tr></table></figure></p>
+<p>在调用clone()方法克隆之后我们可以看到他们的内存地址不是一致的,那么通过clone方法和new方法都可以创建一个新的对象(反序列化也可以.),那他们的区别在哪?</p>
+<ul>
+<li>new操作符的本意是分配内存。程序执行到new操作符时， 首先去看new操作符后面的类型，因为知道了类型，才能知道要分配多大的内存空间。分配完内存之后，再调用构造函数!填充对象的各个字段，这一步叫做对象的初始化，构造方法返回后，一个对象创建完毕，可以把他的引用（地址）发布到外部，在外部就可以使用这个引用操纵这个对象。</li>
+<li>clone在第一步是和new相似的， 都是分配内存，调用clone方法时，分配的内存大小和源对象（即调用clone方法的对象）相同，然后再使用原对象中对应的各个字段，填充新对象的字段， 填充完成之后clone方法返回.一个新的相同的对象被创建，同样把这个新对象的引用发布到外部。</li>
+</ul>
+<h2 id="浅复制与深复制"><a href="#浅复制与深复制" class="headerlink" title="浅复制与深复制"></a>浅复制与深复制</h2><p>在说明深浅复制之前我们先说一个引用复制,什么是<b>引用复制</b>?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Newspaper newspaper=new Newspaper(001, &quot;it news&quot;,&quot;0822&quot;, new Article(&quot;simon&quot;,&quot;prototypemodel&quot;,&quot;good good study!day day up&quot;));</span><br><span class="line">newspaper.print();</span><br><span class="line">Newspaper newspaper2=newspaper;</span><br><span class="line">newspaper2.print();</span><br><span class="line">System.out.println(&quot;newspaper:&quot;+newspaper);</span><br><span class="line">System.out.println(&quot;newspaper2:&quot;+newspaper2);</span><br></pre></td></tr></table></figure>
+<p>我们知道在java中我们不可能直接操作对象,而是要通过对象的引用来操作,每一个对象的引用都占用着四个字节来记录着所指向的对象的内存地址.<br><img src="http://img.blog.csdn.net/20170822152616232?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>有了引用复制的概念,那么什么是<b>浅复制</b>呢?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Newspaper newspaper=new Newspaper(001, &quot;it news&quot;,&quot;0822&quot;, new Article(&quot;simon&quot;,&quot;prototypemodel&quot;,&quot;good good study!day day up&quot;));</span><br><span class="line">newspaper.print();</span><br><span class="line">Newspaper newspaper2=(Newspaper) newspaper.clone();</span><br><span class="line">newspaper2.print();</span><br><span class="line"></span><br><span class="line">System.out.println(&quot;newspaper:&quot;+newspaper);</span><br><span class="line">System.out.println(&quot;newspaper2:&quot;+newspaper2);</span><br></pre></td></tr></table></figure>
+<p>我们通过clone()的方式可以达到浅复制的效果,从图中可以看出,通过clone()方式,我们开辟了两块大小相同的内存,他们地址也是不一样的,但是他们持有的article的引用却一样.所以还只是浅复制.也就是说改变newspaper中的article那么newspaper2中的article也将改变.<br><img src="http://img.blog.csdn.net/20170822154326677?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>那怎样才能达到<b>深复制</b>的效果呢?<br>答案当时是让article类也implement Cloneable接口:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.prototypemodel;</span><br><span class="line"></span><br><span class="line">public class Article implements Cloneable &#123;</span><br><span class="line">	private String author;</span><br><span class="line">	private String art_title;</span><br><span class="line">	private String countent;</span><br><span class="line">	</span><br><span class="line">	public Article() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public Article(String author, String art_title, String countent) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.author = author;</span><br><span class="line">		this.art_title = art_title;</span><br><span class="line">		this.countent = countent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getAuthor() &#123;</span><br><span class="line">		return author;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setAuthor(String author) &#123;</span><br><span class="line">		this.author = author;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getArt_title() &#123;</span><br><span class="line">		return art_title;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setArt_title(String art_title) &#123;</span><br><span class="line">		this.art_title = art_title;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String getCountent() &#123;</span><br><span class="line">		return countent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setCountent(String countent) &#123;</span><br><span class="line">		this.countent = countent;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		return super.clone();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	@Override</span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return &quot;Article [author=&quot; + author + &quot;, art_title=&quot; + art_title + &quot;, countent=&quot; + countent + &quot;]&quot;;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>并修改Newspaper里面的clone方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">	Newspaper news=(Newspaper) super.clone();</span><br><span class="line">	news.article=(Article) this.article.clone();</span><br><span class="line">	return news;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20170822160953068?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>需要注意的是在clone过程中,引用类型被clone()只是创建一个新的对象引用,但是还是指向同一对象,基本数据类型被clone()是位克隆,至于String虽然是应用类型但是他是不可变类型,每一次clone都是一次new的操作,所以不用担心String类型深浅复制的问题.还有一个需要注意的点是深复制是相对了,没有绝对的深复制,在使用原型模式的时候复制深度是需要预先考虑的事情.</p>
+<h2 id="原型模式的实战"><a href="#原型模式的实战" class="headerlink" title="原型模式的实战"></a><b>原型模式的实战</b></h2><p>原型模式中的复制用的都是深复制,一般作用于需要保护性克隆的场景,也就是说,克隆出来的新对象的改变不应影响原对象.<br>在clone方法的实现中我们应该根据对象的构造难度来预估应该是使用new还是super.clone()</p>
+<hr>
+<p>在账号模块中我们希望开发者只能在账号模块中才能修改账号信息,对于外部属性修改是封闭的,只能通过统一的接口来更改已登录账号信息.<br>怎样实现呢?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.prototypemodel;</span><br><span class="line"></span><br><span class="line">public class User implements Cloneable &#123;</span><br><span class="line">	public String name;</span><br><span class="line">	public String age;</span><br><span class="line">	public String phone;</span><br><span class="line">	public String token;</span><br><span class="line">	public Address address;</span><br><span class="line">	public User() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	public User(String name, String age, String phone, String token, Address address) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.name = name;</span><br><span class="line">		this.age = age;</span><br><span class="line">		this.phone = phone;</span><br><span class="line">		this.token = token;</span><br><span class="line">		this.address = address;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		User user=(User) super.clone();</span><br><span class="line">		user.address=(Address) this.address.clone();</span><br><span class="line">		return user;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.prototypemodel;</span><br><span class="line"></span><br><span class="line">public class Address implements Cloneable&#123;</span><br><span class="line"></span><br><span class="line">	public String country;</span><br><span class="line">	public String province;</span><br><span class="line">	public String city;</span><br><span class="line">	public Address() &#123;</span><br><span class="line">		super();</span><br><span class="line">	&#125;</span><br><span class="line">	public Address(String country, String province, String city) &#123;</span><br><span class="line">		super();</span><br><span class="line">		this.country = country;</span><br><span class="line">		this.province = province;</span><br><span class="line">		this.city = city;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	@Override</span><br><span class="line">	protected Object clone() throws CloneNotSupportedException &#123;</span><br><span class="line">		return super.clone();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.prototypemodel;</span><br><span class="line"></span><br><span class="line">public class LoginSession &#123;</span><br><span class="line">	//private 禁止外部直接修改已登录用户信息</span><br><span class="line">	private User loginuser;</span><br><span class="line">	//用于获取,保存,修改已登录账户</span><br><span class="line">	static LoginSession loginSession;</span><br><span class="line">	</span><br><span class="line">	public static LoginSession getInstance()&#123;</span><br><span class="line">		if(loginSession==null)&#123;</span><br><span class="line">			synchronized (LoginSession.class) &#123;</span><br><span class="line">				if(loginSession==null)&#123;</span><br><span class="line">					loginSession=new LoginSession();	</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return loginSession;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//对于外部模块只有通过setLoginuser修改已登录账号信息</span><br><span class="line">	public void setLoginuser(User loginuser) &#123;</span><br><span class="line">		this.loginuser = loginuser;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	//使用保护性克隆,获取的是已登录账号的</span><br><span class="line">	public User getLoginUser() throws CloneNotSupportedException&#123;</span><br><span class="line">		return (User) loginuser.clone();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>您的一份奖励,就是我的一份激励</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/17/builder-pattern/" rel="next" title="(设计模式)建造者模式">
+                <i class="fa fa-chevron-left"></i> (设计模式)建造者模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/24/factory-pattern/" rel="prev" title="(设计模式)工厂模式">
+                (设计模式)工厂模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是原型模式"><span class="nav-number">1.</span> <span class="nav-text">什么是原型模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#经典模式"><span class="nav-number">2.</span> <span class="nav-text">经典模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Coloneable"><span class="nav-number">3.</span> <span class="nav-text">Coloneable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浅复制与深复制"><span class="nav-number">4.</span> <span class="nav-text">浅复制与深复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原型模式的实战"><span class="nav-number">5.</span> <span class="nav-text">原型模式的实战</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

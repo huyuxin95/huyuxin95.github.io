@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="设计模式," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="第四篇:工厂模式  我们通常使用new来创建一个新的对象，但是也随之带来一系列问题，比如，许多复杂对象的创建需要一定的步骤，在创建对象的时候需要依赖别的对象，直接在ClassA 中创建ClassB的对象,那么代码的耦合强太高。 什么是工厂模式工厂模式分为：  简单工厂模式（静态工厂模式）  工厂方法模式  抽象工厂模式  那他们三有什么区别呢？   简单工厂模式：一个抽象产品类，可以派生出多个具">
+<meta name="keywords" content="设计模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(设计模式)工厂模式">
+<meta property="og:url" content="http://yoursite.com/2017/08/24/factory-pattern/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="第四篇:工厂模式  我们通常使用new来创建一个新的对象，但是也随之带来一系列问题，比如，许多复杂对象的创建需要一定的步骤，在创建对象的时候需要依赖别的对象，直接在ClassA 中创建ClassB的对象,那么代码的耦合强太高。 什么是工厂模式工厂模式分为：  简单工厂模式（静态工厂模式）  工厂方法模式  抽象工厂模式  那他们三有什么区别呢？   简单工厂模式：一个抽象产品类，可以派生出多个具">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-13T03:02:49.209Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(设计模式)工厂模式">
+<meta name="twitter:description" content="第四篇:工厂模式  我们通常使用new来创建一个新的对象，但是也随之带来一系列问题，比如，许多复杂对象的创建需要一定的步骤，在创建对象的时候需要依赖别的对象，直接在ClassA 中创建ClassB的对象,那么代码的耦合强太高。 什么是工厂模式工厂模式分为：  简单工厂模式（静态工厂模式）  工厂方法模式  抽象工厂模式  那他们三有什么区别呢？   简单工厂模式：一个抽象产品类，可以派生出多个具">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/24/factory-pattern/"/>
+
+
+
+
+
+  <title>(设计模式)工厂模式 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/24/factory-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">(设计模式)工厂模式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-24T01:04:54+08:00">
+                2017-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>第四篇:工厂模式</p>
+</blockquote>
+<p>我们通常使用new来创建一个新的对象，但是也随之带来一系列问题，比如，许多复杂对象的创建需要一定的步骤，在创建对象的时候需要依赖别的对象，直接在ClassA 中创建ClassB的对象,那么代码的耦合强太高。</p>
+<h2 id="什么是工厂模式"><a href="#什么是工厂模式" class="headerlink" title="什么是工厂模式"></a>什么是工厂模式</h2><p>工厂模式分为：</p>
+<ul>
+<li>简单工厂模式（静态工厂模式） </li>
+<li>工厂方法模式 </li>
+<li>抽象工厂模式</li>
+</ul>
+<p>那他们三有什么区别呢？</p>
+<hr>
+<ul>
+<li>简单工厂模式：<br>一个抽象产品类，可以派生出多个具体产品类。<br>一个工厂类。<br>工厂类只能创建指定具体产品类的实例。</li>
+</ul>
+<hr>
+<ul>
+<li>工厂方法模式：<br>一个抽象产品类，可以派生出多个具体产品类。<br>一个抽象工厂类，可以派生出多个具体工厂类。<br>每个具体工厂类只能创建一个具体产品类的实例。</li>
+</ul>
+<hr>
+<ul>
+<li>抽象工厂模式：<br>多个抽象产品类，每个抽象产品类可以派生出多个具体产品类。<br>一个抽象工厂类，可以派生出多个具体工厂类。<br>每个具体工厂类可以创建多个具体产品类的实例。   </li>
+</ul>
+<hr>
+<p>他们三是从上而下逐步抽象的过程。</p>
+<h2 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a><b>简单工厂模式</b></h2><p>小王开了一家奥迪生产车间，主要生产奥迪的Q系列Q3，Q5，Q7，小王知道他们三款的组装其实大致相同，其中最为主要的工作就是组装发动机，安装汽车剩余配件，安装汽车系统软件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.factorymodel;</span><br><span class="line"></span><br><span class="line">public abstract class AudiProduct &#123;</span><br><span class="line">	</span><br><span class="line">	abstract void installengine();</span><br><span class="line">	</span><br><span class="line">	abstract void installfitting();</span><br><span class="line">	</span><br><span class="line">	abstract void installsoftware();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Q3：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.factorymodel;</span><br><span class="line"></span><br><span class="line">public class AudiQ3 extends AudiProduct &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installengine() &#123;</span><br><span class="line">		System.out.println(&quot;Q3:installengine&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installfitting() &#123;</span><br><span class="line">		System.out.println(&quot;Q3:installfitting&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installsoftware() &#123;</span><br><span class="line">		System.out.println(&quot;Q3:installsoftware&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Q5：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.factorymodel;</span><br><span class="line"></span><br><span class="line">public class AudiQ5 extends AudiProduct &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installengine() &#123;</span><br><span class="line">		System.out.println(&quot;Q5:installengine&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installfitting() &#123;</span><br><span class="line">		System.out.println(&quot;Q5:installfitting&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installsoftware() &#123;</span><br><span class="line">		System.out.println(&quot;Q5:installsoftware&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Q7：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.factorymodel;</span><br><span class="line"></span><br><span class="line">public class AudiQ7 extends AudiProduct &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installengine() &#123;</span><br><span class="line">		System.out.println(&quot;Q7:installengine&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installfitting() &#123;</span><br><span class="line">		System.out.println(&quot;Q7:installfitting&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	void installsoftware() &#123;</span><br><span class="line">		System.out.println(&quot;Q7:installsoftware&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们还需要一个工厂来生产这些产品：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.factorymodel;</span><br><span class="line"></span><br><span class="line">public class AudiFactory &#123;</span><br><span class="line">	enum CarType&#123;</span><br><span class="line">		AudiQ3,</span><br><span class="line">		AudiQ5,</span><br><span class="line">		AudiQ7</span><br><span class="line">	&#125;;</span><br><span class="line">	</span><br><span class="line">	public static AudiProduct createAudiCar(CarType carType)&#123;</span><br><span class="line">		AudiProduct audiProduct = null;</span><br><span class="line">		switch (carType) &#123;</span><br><span class="line">		case AudiQ3:</span><br><span class="line">			audiProduct=new AudiQ3();</span><br><span class="line">			break;</span><br><span class="line">		case AudiQ5:</span><br><span class="line">			audiProduct=new AudiQ5();</span><br><span class="line">			break;</span><br><span class="line">		case AudiQ7:</span><br><span class="line">			audiProduct=new AudiQ7();</span><br><span class="line">			break;</span><br><span class="line">		default:</span><br><span class="line">			break;</span><br><span class="line">		&#125;</span><br><span class="line">		return audiProduct;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在使用过程中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">	AudiProduct audiCarQ3 = AudiFactory.createAudiCar(CarType.AudiQ3);</span><br><span class="line">	audiCarQ3.installengine();</span><br><span class="line">	audiCarQ3.installfitting();</span><br><span class="line">	audiCarQ3.installsoftware();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Q3:installengine</span><br><span class="line">Q3:installfitting</span><br><span class="line">Q3:installsoftware</span><br></pre></td></tr></table></figure>
+<p>但是这样的实现还是不够优雅，因为当有产品增加的时候，工厂类需要修改增加一个case，这是让人不能忍受的，所以需要<b>反射</b>和<b>泛型</b>来帮忙，重写AudiFactory：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.factorymodel;</span><br><span class="line"></span><br><span class="line">public class AudiFactory &#123;</span><br><span class="line">	</span><br><span class="line">	public static &lt;T extends AudiProduct&gt; T createAudiCar( Class&lt;T&gt; clazz)&#123;</span><br><span class="line"></span><br><span class="line">		AudiProduct audiProduct = null;</span><br><span class="line">		try &#123;</span><br><span class="line">			audiProduct = (T) Class.forName(clazz.getName()).newInstance();</span><br><span class="line">		&#125; catch (InstantiationException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; catch (IllegalAccessException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		return (T) audiProduct;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">	AudiProduct audiCarQ3 = AudiFactory.createAudiCar(AudiQ3.class);</span><br><span class="line">	audiCarQ3.installengine();</span><br><span class="line">	audiCarQ3.installfitting();</span><br><span class="line">	audiCarQ3.installsoftware();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样下次即使有同类产品增加，创建产品类继承AudiProduct，在使用工厂创建的时候只要传入类类型就可以了。</p>
+<h2 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a><b>工厂方法模式<b></b></b></h2><p>工厂方法模式与简单工厂模式的区别在于抽象的工厂类，我们抽象出一个工厂Factory并使用之前泛的简单工厂模式进一步泛化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.factorymodel;</span><br><span class="line"></span><br><span class="line">public abstract class Factory&lt;T&gt; &#123;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重写AudiFactory</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package top.huyuxin.factorymodel;</span><br><span class="line"></span><br><span class="line">public class AudiFactory&lt;T extends AudiProduct&gt; extends Factory&lt;T&gt;&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	public &lt;T extends AudiProduct&gt;T createCar(Class&lt;T&gt; clazz)&#123;</span><br><span class="line">		</span><br><span class="line">		AudiProduct audiProduct = null;</span><br><span class="line">		try &#123;</span><br><span class="line">			audiProduct = (AudiProduct) Class.forName(clazz.getName()).newInstance();</span><br><span class="line">		&#125; catch (InstantiationException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; catch (IllegalAccessException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		return  (T) audiProduct;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们从这可以看出这给以后其他工厂的扩展带来了可能性，也就是引入了工厂的抽象类，下一次我们就可以创建BenzFactory，BMWFactory，这给生产线带来了无限的可能，我们来看下现在泛化的AudiFactory使用，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">	//创建对应的工厂</span><br><span class="line">	AudiFactory&lt;AudiProduct&gt; audiFactory=new AudiFactory&lt;&gt;();</span><br><span class="line">	//创建工厂里的对应的产品</span><br><span class="line">	AudiQ3 audiQ3 = audiFactory.createCar(AudiQ3.class);</span><br><span class="line">	audiQ3.installengine();</span><br><span class="line">	audiQ3.installfitting();</span><br><span class="line">	audiQ3.installsoftware();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a><b>抽象工厂模式</b></h2><p>抽象工厂模式与工厂模式的区别在与抽象产品的多样性以及每个工厂需要创建多个工厂的实例。<br>简单来说就是工厂应当能够创建多种类型的产品<br>，其实我们在对工厂方法模式泛化打的时候就已经利用泛型顺带实现了单一工厂的多种产品的创建。如果需要创建不同类型的产品引入新的抽象产品类以及具体的产品类即可，实现方法同理，这里抽象工厂模式不再赘述。<br>优点：<br>大大的降低了同一类型的对象创建时对于宿主对象的耦合度。对于客户端无需知道具体实现内容，只需面向接口编程即可。<br>缺点：<br>类数量爆炸式增长，当抽象产品类需要改动，工作量较大。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>您的一份奖励,就是我的一份激励</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/22/prototype-pattern/" rel="next" title="(设计模式)原型模式">
+                <i class="fa fa-chevron-left"></i> (设计模式)原型模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/30/strategy-pattern/" rel="prev" title="(设计模式)策略模式">
+                (设计模式)策略模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是工厂模式"><span class="nav-number">1.</span> <span class="nav-text">什么是工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简单工厂模式"><span class="nav-number">2.</span> <span class="nav-text">简单工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂方法模式"><span class="nav-number">3.</span> <span class="nav-text">工厂方法模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象工厂模式"><span class="nav-number">4.</span> <span class="nav-text">抽象工厂模式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
