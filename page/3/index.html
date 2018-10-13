@@ -232,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/20/java-thread-runnable/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/30/strategy-pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -251,7 +251,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/09/20/java-thread-runnable/" itemprop="url">Java多线程之Runnable VS Thread及其资源共享问题</a></h1>
+                <a class="post-title-link" href="/2017/08/30/strategy-pattern/" itemprop="url">(设计模式)策略模式</a></h1>
         
 
         <div class="post-meta">
@@ -263,8 +263,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-09-20T21:07:16+08:00">
-                2016-09-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-30T23:31:05+08:00">
+                2017-08-30
               </time>
             
 
@@ -303,13 +303,15 @@
       
         
           
-          对于 Java 多线程编程中的 implements Runnable 与 extends Thread，部分同学可能会比较疑惑，它们之间究竟有啥区别和联系呢？他们是不是没啥区别随便选呢？实际中究竟该选择哪一个呢？
-甚至网上不少博客文章以讹传讹得出不少谬论，那今天的走进科学栏目将带您一一揭开谜底。
+          
+第五篇:策略模式   
 
+什么是策略模式　策略模式属于对象的行为模式。其用意是针对一组算法，将每一个算法封装到具有共同接口的独立的类中，从而使得它们可以相互替换。策略模式使得算法可以在不影响到客户端的情况下发生变化。策略模式还是很简单的就不写了，转载一篇很不错的^_^
+策略模式的结构　策略模式是对
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/09/20/java-thread-runnable/#more" rel="contents">
+            <a class="btn" href="/2017/08/30/strategy-pattern/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -360,7 +362,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/13/view-scroll/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/24/factory-pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -379,7 +381,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/09/13/view-scroll/" itemprop="url">Android分析View的scrollBy()和scrollTo()的参数正负问题原理分析</a></h1>
+                <a class="post-title-link" href="/2017/08/24/factory-pattern/" itemprop="url">(设计模式)工厂模式</a></h1>
         
 
         <div class="post-meta">
@@ -391,8 +393,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-09-13T16:56:03+08:00">
-                2016-09-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-24T01:04:54+08:00">
+                2017-08-24
               </time>
             
 
@@ -432,15 +434,17 @@
         
           
           
-Android设备平面直角坐标系
+第四篇:工厂模式
 
-在做分析之前，首先要建立起Android设备屏幕的平面直角坐标系概念。在Android手机中，屏幕的直角坐标轴概念简单来说：
-屏幕左上角为直角坐标系的原点(0,0)从原点出发向左为X轴负方向，向右为X轴正方向从原点出发向上为Y轴负方向，向下为Y轴正方向
-上述概念
+我们通常使用new来创建一个新的对象，但是也随之带来一系列问题，比如，许多复杂对象的创建需要一定的步骤，在创建对象的时候需要依赖别的对象，直接在ClassA 中创建ClassB的对象,那么代码的耦合强太高。
+什么是工厂模式工厂模式分为：
+
+简单工厂模式（静态工厂模式） 
+工厂方
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/09/13/view-scroll/#more" rel="contents">
+            <a class="btn" href="/2017/08/24/factory-pattern/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -491,7 +495,7 @@ Android设备平面直角坐标系
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/13/LayoutInflater/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/22/prototype-pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -510,7 +514,7 @@ Android设备平面直角坐标系
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/09/13/LayoutInflater/" itemprop="url">(读书笔记)Android LayoutInflater.inflate方法参数详解原理分析</a></h1>
+                <a class="post-title-link" href="/2017/08/22/prototype-pattern/" itemprop="url">(设计模式)原型模式</a></h1>
         
 
         <div class="post-meta">
@@ -522,8 +526,8 @@ Android设备平面直角坐标系
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-09-13T00:22:24+08:00">
-                2016-09-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-22T17:20:20+08:00">
+                2017-08-22
               </time>
             
 
@@ -562,14 +566,14 @@ Android设备平面直角坐标系
       
         
           
-          LayoutInflater 在看inflate()方法时，我们随便看下如何获得 LayoutInflater ，获得LayoutInflater 实例有三种方式
+          
+第三篇:原型模式
 
-LayoutInflater inflater =
-getLayoutInflater();//调用Activity的getLayou
+什么是原型模式定义:用原型实例指定创建对象的种类,并通过拷贝这些原型创建新的对象.原型模式顾名思义也就是说是有一个样板的,以这个样板为原型.开发者从这个样板对象中复制出一个内部属性一致的对象.原型模式多用于创建复杂的或者构造耗时的对象,因此使用原型模式可以使得应用程序运行更加的
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/09/13/LayoutInflater/#more" rel="contents">
+            <a class="btn" href="/2017/08/22/prototype-pattern/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -620,7 +624,7 @@ getLayoutInflater();//调用Activity的getLayou
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/12/android-toast/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/17/builder-pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -639,7 +643,7 @@ getLayoutInflater();//调用Activity的getLayou
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/09/12/android-toast/" itemprop="url">(读书笔记)Android Toast 显示时间叠加问题的探讨</a></h1>
+                <a class="post-title-link" href="/2017/08/17/builder-pattern/" itemprop="url">(设计模式)建造者模式</a></h1>
         
 
         <div class="post-meta">
@@ -651,8 +655,8 @@ getLayoutInflater();//调用Activity的getLayou
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-09-12T11:30:35+08:00">
-                2016-09-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-17T00:23:27+08:00">
+                2017-08-17
               </time>
             
 
@@ -691,13 +695,15 @@ getLayoutInflater();//调用Activity的getLayou
       
         
           
-          在android中对于toast的显示一般有两种方法：1Toast.makeText(Context, int, int).show();
-1Toast.makeText(Context, CharSequence, int).show();
-对于这两种方法第一个参数都是上下文（Context），第
+          
+第二篇:建造者模式
+
+什么是建造者模式建造者模式是一步一步创建一个复杂对象，允许用户不了解细节的情况下精细的控制对象的构造过程。使得复杂对象的构建与他的表示相分离，同样的构造过程可以创建不同的表示。
+经典模式在生活中我们经常买票，各种各样的票，我们这里要创建一个可以售卖多种票的程序。首先是产品Pr
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/09/12/android-toast/#more" rel="contents">
+            <a class="btn" href="/2017/08/17/builder-pattern/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -748,7 +754,7 @@ getLayoutInflater();//调用Activity的getLayou
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/18/git-three/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/14/singleton-pattern/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -767,7 +773,7 @@ getLayoutInflater();//调用Activity的getLayou
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/01/18/git-three/" itemprop="url">Git的查看，对比，撤销，修改，重写</a></h1>
+                <a class="post-title-link" href="/2017/08/14/singleton-pattern/" itemprop="url">(设计模式)单例模式</a></h1>
         
 
         <div class="post-meta">
@@ -779,8 +785,8 @@ getLayoutInflater();//调用Activity的getLayou
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-01-18T15:46:36+08:00">
-                2016-01-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-14T18:02:28+08:00">
+                2017-08-14
               </time>
             
 
@@ -819,12 +825,17 @@ getLayoutInflater();//调用Activity的getLayou
       
         
           
-          1. 查看与对比
-1234567891011121314git show (commit/tag/tree/blog)git show master^(master~) //查看master下的第一副提交git show master^2   //查看master下的第二副提交git show --
+          
+第一篇:单例模式
+
+单例模式是大家最为熟悉的设计模式也是大多数程序员接触的第一种设计模式,但是要真的去全面了解一波单例模式还是要点时间.
+什么是单例:确保某一个类在全局只有一个实例,最为常见的的场景就是全局变量以及全局的工具类,重复创建带来资源与性能的浪费.那么创建单例模式需要注意什么呢?
+
+重写
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/01/18/git-three/#more" rel="contents">
+            <a class="btn" href="/2017/08/14/singleton-pattern/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -875,7 +886,7 @@ getLayoutInflater();//调用Activity的getLayou
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/15/git-two/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/19/apk-shell/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -894,7 +905,7 @@ getLayoutInflater();//调用Activity的getLayou
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/01/15/git-two/" itemprop="url">关于Git本地分支与合并的理解</a></h1>
+                <a class="post-title-link" href="/2017/06/19/apk-shell/" itemprop="url">Apk源码的加固(加壳)原理解析和实现</a></h1>
         
 
         <div class="post-meta">
@@ -906,8 +917,8 @@ getLayoutInflater();//调用Activity的getLayou
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-01-15T20:57:28+08:00">
-                2016-01-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-19T00:30:04+08:00">
+                2017-06-19
               </time>
             
 
@@ -946,13 +957,12 @@ getLayoutInflater();//调用Activity的getLayou
       
         
           
-          首先需要了解一下几个命令的作用：
-12345git branch //创建分支git tag //给固定的commit做标记git checkout //在固定分支之间进行切换git stash //切换分支之前保存本地修改git merge  //合并分支
-分支：个人理解就是在当前工作区间向下衍生
+          1好久没写博客了，要深刻检讨下！
+前言：在Android中没有经过加密的Apk给人的感觉就是在裸奔，通过apktool,dex2jar,AndroidKill等各式各样的反编译工具就可以轻松的获取其smail代码，如这个叫SourceProject的helloworld程序被apktool反编译后，
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/01/15/git-two/#more" rel="contents">
+            <a class="btn" href="/2017/06/19/apk-shell/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1003,7 +1013,7 @@ getLayoutInflater();//调用Activity的getLayou
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/14/git-one/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/30/csharp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -1022,7 +1032,7 @@ getLayoutInflater();//调用Activity的getLayou
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/01/14/git-one/" itemprop="url">Git的本地操作</a></h1>
+                <a class="post-title-link" href="/2017/03/30/csharp/" itemprop="url">C#中的委托和事件</a></h1>
         
 
         <div class="post-meta">
@@ -1034,8 +1044,8 @@ getLayoutInflater();//调用Activity的getLayou
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-01-14T12:02:57+08:00">
-                2016-01-14
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-30T20:33:39+08:00">
+                2017-03-30
               </time>
             
 
@@ -1074,16 +1084,16 @@ getLayoutInflater();//调用Activity的getLayou
       
         
           
-          闲来无事看了下git，这些是做的一些笔记以便以后回忆:
+          
+原文地址:C# 中的委托和事件
 
-1.初始化Git仓库（有.git隐藏文件）  
-1git init git_non_bare_repo //其中git_non_bare_repo为新建仓库的名字
-2.创建一个裸仓库（没有.git隐藏文件）
-1git init –bare g
+###引言
+
+委托 和 事件在 .Net Framework中的应用非常广泛，然而，较好地理解委托和事件对很多接触C#时间不长的人来说并不容易。它们就像是一道槛儿，过了这个槛的人，觉得真是太容易了，而没有过去的人每次见到委托和事件就觉得心里别（biè）得慌，混身不
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/01/14/git-one/#more" rel="contents">
+            <a class="btn" href="/2017/03/30/csharp/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1134,7 +1144,7 @@ getLayoutInflater();//调用Activity的getLayou
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/11/04/matlab-one/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/29/mutil-application/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -1153,7 +1163,7 @@ getLayoutInflater();//调用Activity的getLayou
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2015/11/04/matlab-one/" itemprop="url">MATLAB笔记（一）</a></h1>
+                <a class="post-title-link" href="/2017/03/29/mutil-application/" itemprop="url">(设计模式)接口代理实现Application的多继承</a></h1>
         
 
         <div class="post-meta">
@@ -1165,8 +1175,8 @@ getLayoutInflater();//调用Activity的getLayou
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-11-04T13:18:37+08:00">
-                2015-11-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-29T11:50:53+08:00">
+                2017-03-29
               </time>
             
 
@@ -1205,12 +1215,264 @@ getLayoutInflater();//调用Activity的getLayou
       
         
           
-          个人读书笔记
-123456789101112131415161718192021222324252627282930313233343536373839404142434445b=a([2,4],[1,3]); //将第2行和第4行与第1列和第3列的交点元素取出a([2,4,5],:)=[]; //
+          在工作中碰到一个场景,就是你APP的Application是需要继承自家的Application,但是你在接入别人的SDK时,有的sdk接入要求你的Application继承他家的Application,这就比较尴尬了.Java只能单继承这可怎么是好?接口代理就可以用上了.首先我们让清单文件声明的M
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2015/11/04/matlab-one/#more" rel="contents">
+            <a class="btn" href="/2017/03/29/mutil-application/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/22/proxy-android/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/01/22/proxy-android/" itemprop="url">(设计模式)代理模式在Android中的使用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-22T19:01:41+08:00">
+                2017-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          假如，我们现在要在每次启动一个activity之前都要打印一条信息。最笨的方式就是用一个BaseActivity集成Activity，但是，如果我们这个项目已经进行了N多年，想象一下，这得修改多少源码，且这破坏了我们的设计原则，我们尽量扩展而不是修改代码。那些已有的代码都是经历时间考验的，修改之后可
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/22/proxy-android/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/20/viewpage-fragment/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/01/20/viewpage-fragment/" itemprop="url">Android中ViewPager+Fragment取消(禁止)预加载延迟加载(懒加载)问题解决方案</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-20T11:49:41+08:00">
+                2017-01-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          
+在Android中我们经常会用到ViewPager+Fragment组合。然而，有一个很让人头疼的问题就是，我们去加载数据的时候由于ViewPager的内部机制所限制，所以它会默认至少预加载一个。这让人很郁闷，所以，我就想到要封装一个Fragment来解决这个问题。这里还解决一个问题就是在Andr
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/20/viewpage-fragment/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1252,7 +1514,7 @@ getLayoutInflater();//调用Activity的getLayou
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1298,7 +1560,7 @@ getLayoutInflater();//调用Activity的getLayou
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

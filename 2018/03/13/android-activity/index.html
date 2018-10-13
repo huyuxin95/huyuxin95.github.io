@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android基础," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="##概述:从应用的启动流程来看,Activity只是一段程序的代码,它既不是程序的入口,也不是程序的必要流程.只是程序运行中的一个场景,一个组件.是基于Context扩展了特定功能接口的一个前台运行的场景.AMS通过ApplicationThread的引用代理,远程调用ApplicationThread的服务端,并通过ApplicationThread的服务端发送消息给应用程序主线程从而控制Act">
+<meta name="keywords" content="Android基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(Android基础)什么是Activity">
+<meta property="og:url" content="http://yoursite.com/2018/03/13/android-activity/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="##概述:从应用的启动流程来看,Activity只是一段程序的代码,它既不是程序的入口,也不是程序的必要流程.只是程序运行中的一个场景,一个组件.是基于Context扩展了特定功能接口的一个前台运行的场景.AMS通过ApplicationThread的引用代理,远程调用ApplicationThread的服务端,并通过ApplicationThread的服务端发送消息给应用程序主线程从而控制Act">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/03/13/android-activity/image.png">
+<meta property="og:updated_time" content="2018-10-13T04:59:36.638Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(Android基础)什么是Activity">
+<meta name="twitter:description" content="##概述:从应用的启动流程来看,Activity只是一段程序的代码,它既不是程序的入口,也不是程序的必要流程.只是程序运行中的一个场景,一个组件.是基于Context扩展了特定功能接口的一个前台运行的场景.AMS通过ApplicationThread的引用代理,远程调用ApplicationThread的服务端,并通过ApplicationThread的服务端发送消息给应用程序主线程从而控制Act">
+<meta name="twitter:image" content="http://yoursite.com/2018/03/13/android-activity/image.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/13/android-activity/"/>
+
+
+
+
+
+  <title>(Android基础)什么是Activity | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/13/android-activity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">(Android基础)什么是Activity</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-13T16:51:48+08:00">
+                2018-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>##概述:<br>从应用的启动流程来看,Activity只是一段程序的代码,它既不是程序的入口,也不是程序的必要流程.只是程序运行中的一个场景,一个组件.是基于Context扩展了特定功能接口的一个前台运行的场景.<br>AMS通过ApplicationThread的引用代理,远程调用ApplicationThread的服务端,并通过ApplicationThread的服务端发送消息给应用程序主线程从而控制Activity的函数调用(即生命周期).</p>
+<p>Android属于多进程单窗口系统,只允许当个窗口位于前台,在下一个Activity启动之前,上一个Activity需要先Pause以失去焦点</p>
+<p><strong>Activty的生命周期:</strong></p>
+<p>Activity 的整个生命周期在三个嵌套循环中：</p>
+<ul>
+<li>Activity 的整个生命周期发生在 onCreate() 调用与 onDestroy() 调用之间。您的 Activity 应在 onCreate() 中执行“全局”状态设置（例如定义布局），并释放 onDestroy() 中的所有其余资源。<br>例如，如果您的 Activity 有一个在后台运行的线程，用于从网络上下载数据，它可能会在 onCreate() 中创建该线程，然后在 onDestroy() 中停止该线程。<br>*</li>
+<li><p>Activity 的可见生命周期发生在 onStart() 调用与 onStop() 调用之间。在这段时间，用户可以在屏幕上看到 Activity<br>例如，当一个新 Activity 启动，并且此 Activity 不再可见时，系统会调用 onStop()。您可以在调用这两个方法之间保留向用户显示 Activity 所需的资源。 例如，您可以在 onStart() 中注册一个 BroadcastReceiver 以监控影响 UI 的变化，并在用户无法再看到您显示的内容时在 onStop() 中将其取消注册。在 Activity 的整个生命周期，当 Activity 在对用户可见和隐藏两种状态中交替变化时，系统可能会多次调用 onStart() 和 onStop()。</p>
+</li>
+<li><p>Activity 的前台生命周期发生在 onResume() 调用与 onPause() 调用之间。在这段时间，Activity 位于屏幕上的所有其他 Activity 之前，并具有用户输入焦点。 Activity 可频繁转入和转出前台<br>例如，当设备转入休眠状态或出现对话框时，系统会调用 onPause()。 由于此状态可能经常发生转变，因此这两个方法中应采用适度轻量级的代码，以避免因转变速度慢而让用户等待。</p>
+</li>
+</ul>
+<p><img src="/2018/03/13/android-activity/image.png" alt="图片加载失败"></p>
+<p>启动Activity时的配置:</p>
+<p>taskAffinity属性<br>默认情况下，一个应用程序中的所有activity都有一个affinity，它们属于同一个Task。<br>每个activity可以通过<activity>中的taskAffinity属性设置单独的affinity。</activity></p>
+<ul>
+<li>不同应用程序中的activity可以共享同一个affinity。</li>
+</ul>
+<ul>
+<li>同一个应用程序中的不同activity也可以设置成不同的affinity。</li>
+</ul>
+<p> affinity属性在2种情况下起作用：</p>
+<ul>
+<li>启动activity的Intent对象包含FLAG_ACTIVITY_NEW_TASK标记。</li>
+<li>启动activity的allowTaskReparenting被设置成true。</li>
+</ul>
+<p>Activity启动模式launchMode属性有四种值：</p>
+<p>(需要注意的是同一个应用不同Activity可以在不同栈中,不同应用Activity也可以在相同栈中,栈是相对AMS而言,不是应用程序)</p>
+<p>standard、singleTop、singleTask和singleInstance。</p>
+<ul>
+<li>standard(标准模式)：默认模式，可省略。在这种启动模式下，都会默认创建一个新的实例。因此，这种模式允许多个重复Activity叠加。</li>
+<li>singleTop(栈顶复用)：这种模式允许有多个实例，但不允许多个重复Activity叠加。如果Activity位于栈顶，不会创建新的实例，而会调用onNewIntent()方法。</li>
+<li>singleTask(栈内复用)：这种模式只有一个实例。在同一应用程序中启动时，若Activity不存在则在当前Task创建一个新的实例，若Activity存在则将Task中在其之上的其它Activity销毁，并调用此Activity的onNewIntent()方法。</li>
+<li>singleInstance(全局单例)：这种模式只有一个实例，并且该实例独立运行在一个Task中。这个Task只有该实例，不允许其它Activity存在。如果B应用同样启动当前Activity那么将会复用原有实例</li>
+</ul>
+<p>Activity的启动流程(Framework版):<br>从调用StartActivity开始,一般情况都是有正在运行的Activity所以需要先暂停当前正在前台的Activity,</p>
+<p>暂停完毕,会给Ams发送一个Binder消息completePause(),在该函数中,由于上一个Activity并没有finish.仅仅是stoping,所以会把上一个Activity添加到mStopingActivites列表中</p>
+<p>当目标Activity启动之后依次执行attach,onCreate,onStart,onResume,在performResumeActivity()之后,通过向主进程的Looper中添加IdelHandle,当主进程MessageQueue消息为空时,向Ams发送一个请求进行内存清理的消息.这会导致Ams在内部调用activityIdleInternal()方法,该方法首先会处理mStopingActivites列表中的Activity对象,这里会调用到StopActivityLocked()方法,这会使得Ams依次通知Activty执行onStop和onDestory方法,并在最后执行trimApplication施放内存</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>您的一份奖励,就是我的一份激励</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android基础/" rel="tag"># Android基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/14/android-context/" rel="next" title="(Android基础)什么是Context">
+                <i class="fa fa-chevron-left"></i> (Android基础)什么是Context
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/23/android-service/" rel="prev" title="(Android基础)什么是Service">
+                (Android基础)什么是Service <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

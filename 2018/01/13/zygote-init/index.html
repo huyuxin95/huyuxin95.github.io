@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android基础," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="##概述：init进程通过启动app_process进程并创建Java虚拟机后，使用JNI调用由Java编写的Zygote代码。Zygote进程通过已加载的Java虚拟机从而可以运行Android应用、Zygote进程通过fork()创建子进程，避免了子进程的重复初始化虚拟机以及加载Framework类库和资源的操作。 1.init进程启动完系统运行所需的各种Deamon后，启动Zygote进程。">
+<meta name="keywords" content="Android基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(Android基础)Zygote进程的启动流程">
+<meta property="og:url" content="http://yoursite.com/2018/01/13/zygote-init/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="##概述：init进程通过启动app_process进程并创建Java虚拟机后，使用JNI调用由Java编写的Zygote代码。Zygote进程通过已加载的Java虚拟机从而可以运行Android应用、Zygote进程通过fork()创建子进程，避免了子进程的重复初始化虚拟机以及加载Framework类库和资源的操作。 1.init进程启动完系统运行所需的各种Deamon后，启动Zygote进程。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/01/13/zygote-init/zygote_init_one.png">
+<meta property="og:image" content="http://yoursite.com/2018/01/13/zygote-init/zygote_init_two.png">
+<meta property="og:updated_time" content="2018-10-13T04:59:49.061Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(Android基础)Zygote进程的启动流程">
+<meta name="twitter:description" content="##概述：init进程通过启动app_process进程并创建Java虚拟机后，使用JNI调用由Java编写的Zygote代码。Zygote进程通过已加载的Java虚拟机从而可以运行Android应用、Zygote进程通过fork()创建子进程，避免了子进程的重复初始化虚拟机以及加载Framework类库和资源的操作。 1.init进程启动完系统运行所需的各种Deamon后，启动Zygote进程。">
+<meta name="twitter:image" content="http://yoursite.com/2018/01/13/zygote-init/zygote_init_one.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/13/zygote-init/"/>
+
+
+
+
+
+  <title>(Android基础)Zygote进程的启动流程 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/13/zygote-init/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">(Android基础)Zygote进程的启动流程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T12:28:54+08:00">
+                2018-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>##概述：<br>init进程通过启动app_process进程并创建Java虚拟机后，使用JNI调用由Java编写的Zygote代码。<br>Zygote进程通过已加载的Java虚拟机从而可以运行Android应用、Zygote进程通过fork()创建子进程，避免了子进程的重复初始化虚拟机以及加载Framework类库和资源的操作。</p>
+<p>1.init进程启动完系统运行所需的各种Deamon后，启动Zygote进程。Zygote启动完成之后，Android的服务与应用程序都由Zygote进程启动运行<em>（tips：Android系统中运行的进程主要分为三类：内核进程，由init进程启动的Deamon进程，由Zygote启动的Android的服务和应用程序）</em></p>
+<p>2.Linux系统中创建并运行一个进程，与在Android系统中通过Zygote来创建并运行一个进程的区别</p>
+<p>在Linux系统中：</p>
+<p><img src="/2018/01/13/zygote-init/zygote_init_one.png" alt="图片加载失败"></p>
+<ul>
+<li>一：进程A通过fork()函数创建一个新的进程，新创建的进程A`共享父进程A的内存结构与库连接信息</li>
+<li>二：进程A<code>通过调用exec(</code>B`),将进程B的代码加载到内存中，此时父进程A的内存信息被清除，并从新分配内存，以便运行被装载的进程B，接着形成新的库连接信息，供进程B使用。</li>
+</ul>
+<p>在Android系统中：</p>
+<ul>
+<li>1.Zygote在被启动之后，进行一系列的初始化，套接字的绑定，执行预加载类库和资源，启动SystemServer进程。</li>
+<li>2.Zygote进程调用fork()函数创建出Zygote<code>子进程，子进程Zygote</code>共享父进程Zygote的代码区和连接信息。</li>
+<li>3.子进程Zygote`动态加载Application A的代码，应用程序A开始运行。新生成的应用程序A会使用已有的Zygote进程的库与资源连接信息。<br><em>tips:（Copy on Write）在创建新进程后新进程会共享父进程的内存空间，即新的子进程会复制所有与父进程虚拟内存相关的信息并使用它。COW是针对内存复制的一种技术。它会在执行完fork()后将父进程的页表复制一份到子进程，并将内存的页面操作位全部置为只读。当其中一个进程试图改变页面内容时会产生段错误信号。CPU获得该信号后，将需要写入的页面复制一份到对应进程中，并将原页面置为可读可写。</em></li>
+</ul>
+<p>3.运行ZygoteInit类</p>
+<p>app_process进程初始化好Java虚拟机后,将ZygoteInit类装载到虚拟机中.ZygoteInit开始运行</p>
+<p><img src="/2018/01/13/zygote-init/zygote_init_two.png" alt="图片记载失败"></p>
+<ul>
+<li>1.通过registerZygoteSocket方法,绑定已在init进程中注册的socket端口</li>
+<li>2.通过preloadClasses预加载类库,通过preloadResource加载资源</li>
+<li>3.通过startSystemServer启动SystemService进程</li>
+<li>4.runSelectLoop处理新应用程序的请求</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>您的一份奖励,就是我的一份激励</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android基础/" rel="tag"># Android基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/20/start-init/" rel="next" title="(Android基础)Init进程的启动流程">
+                <i class="fa fa-chevron-left"></i> (Android基础)Init进程的启动流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/19/init-application/" rel="prev" title="(Android基础)Application的启动流程">
+                (Android基础)Application的启动流程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
