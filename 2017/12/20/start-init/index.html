@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Matlab," />
+  <meta name="keywords" content="Android基础," />
 
 
 
@@ -79,18 +79,20 @@
 
 
 
-<meta name="description" content="个人读书笔记 123456789101112131415161718192021222324252627282930313233343536373839404142434445b=a([2,4],[1,3]); //将第2行和第4行与第1列和第3列的交点元素取出a([2,4,5],:)=[]; //将抽取第2行第4行和第5行A=eye(n); //单位矩阵B=zeros(n); //零矩阵C=on">
-<meta name="keywords" content="Matlab">
+<meta name="description" content="##概述： 在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1">
+<meta name="keywords" content="Android基础">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MATLAB笔记（一）">
-<meta property="og:url" content="http://yoursite.com/2015/11/04/matlab-one/index.html">
+<meta property="og:title" content="(Android基础)Init进程的启动流程">
+<meta property="og:url" content="http://yoursite.com/2017/12/20/start-init/index.html">
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
-<meta property="og:description" content="个人读书笔记 123456789101112131415161718192021222324252627282930313233343536373839404142434445b=a([2,4],[1,3]); //将第2行和第4行与第1列和第3列的交点元素取出a([2,4,5],:)=[]; //将抽取第2行第4行和第5行A=eye(n); //单位矩阵B=zeros(n); //零矩阵C=on">
+<meta property="og:description" content="##概述： 在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-13T01:31:45.155Z">
+<meta property="og:image" content="http://yoursite.com/2017/12/20/start-init/start_init.png">
+<meta property="og:updated_time" content="2018-10-13T03:56:09.761Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MATLAB笔记（一）">
-<meta name="twitter:description" content="个人读书笔记 123456789101112131415161718192021222324252627282930313233343536373839404142434445b=a([2,4],[1,3]); //将第2行和第4行与第1列和第3列的交点元素取出a([2,4,5],:)=[]; //将抽取第2行第4行和第5行A=eye(n); //单位矩阵B=zeros(n); //零矩阵C=on">
+<meta name="twitter:title" content="(Android基础)Init进程的启动流程">
+<meta name="twitter:description" content="##概述： 在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1">
+<meta name="twitter:image" content="http://yoursite.com/2017/12/20/start-init/start_init.png">
 
 
 
@@ -120,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2015/11/04/matlab-one/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/12/20/start-init/"/>
 
 
 
 
 
-  <title>MATLAB笔记（一） | Huyuxin's Blog</title>
+  <title>(Android基础)Init进程的启动流程 | Huyuxin's Blog</title>
   
 
 
@@ -233,7 +235,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/11/04/matlab-one/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/20/start-init/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="huyuxin">
@@ -250,7 +252,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MATLAB笔记（一）</h1>
+          <h1 class="post-title" itemprop="name headline">(Android基础)Init进程的启动流程</h1>
         
 
         <div class="post-meta">
@@ -262,8 +264,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-11-04T13:18:37+08:00">
-                2015-11-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-20T15:49:37+08:00">
+                2017-12-20
               </time>
             
 
@@ -300,8 +302,23 @@
       
 
       
-        <p>个人读书笔记</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">b=a([2,4],[1,3]); //将第2行和第4行与第1列和第3列的交点元素取出</span><br><span class="line">a([2,4,5],:)=[]; //将抽取第2行第4行和第5行</span><br><span class="line">A=eye(n); //单位矩阵</span><br><span class="line">B=zeros(n); //零矩阵</span><br><span class="line">C=ones(n); //“1”矩阵</span><br><span class="line">D=rand(n); //随机矩阵</span><br><span class="line">y=linspace(a,b,n); //产生一个行矢量y，把a到b之间的数等分n份 有点类似y=a:(b-a)/n:b</span><br><span class="line">clear i,j; //清除变量i，j</span><br><span class="line">C=A*B;  //矩阵相乘A的行数必须等于B的列数</span><br><span class="line">C=A.*B;  //点乘为对应元素相乘，两矩阵行列数必须相等，或其中一个为标量</span><br><span class="line">B/A=B*inv(A); A\C=inv(A)*C;  //两矩阵相除等于乘以其中一个矩阵的逆矩阵，其中inv(a)为求a的逆矩阵</span><br><span class="line">B‘ //B矩阵的转置</span><br><span class="line">//关系操作符需要注意的是成立为“1”不成立为“0”；</span><br><span class="line">x=input(&apos;请输入x的值&apos;)；</span><br><span class="line">disp(显示指定内容)；</span><br><span class="line">plot(t); //绘制二维图形</span><br><span class="line">grid on   //绘制图形时网格开启，grid off 关闭网格、</span><br><span class="line">title(&apos;string&apos;); //添加图像标题命令</span><br><span class="line">axis([xmin,xmax,ymin,ymax]); //设置坐标刻度</span><br><span class="line">[X,Y]=meshgrid(x,y); //在X-Y平面建立网络坐标</span><br><span class="line">plot3(x,y,z); //三维图像的绘制</span><br><span class="line">mesh(x,y,z);//三维网线图</span><br><span class="line">surf(x,y,z); //三维曲面图</span><br><span class="line">//M文件</span><br><span class="line">//行数定义行 function y=mean(x,dim)  其中函数名必须和保存的文件名相同,x,dim 为要传入的参数，</span><br><span class="line">//使用自定义的函数需要将路径添加至函数调用路径</span><br><span class="line">//函数中使用clear； close all；将会清除传入的参数值，切记</span><br><span class="line">%注释%//注释行是以%开头%</span><br><span class="line">//习题</span><br><span class="line">//1.</span><br><span class="line">syms x;              %定义一个符号变量：syms x定义一个符号变量x</span><br><span class="line">y=x^3+(x-0.98)^2/(x+1.35)^3-5*(x+1/x);</span><br><span class="line">subs(y,x,2);		%subs()是符号计算函数，表示将符号表达式中的某些符号变量替换为指定的新的变量,如将y中的下替换为2</span><br><span class="line">disp(&apos;x=2时解:&apos;);</span><br><span class="line">ans</span><br><span class="line">disp(&apos;x=4时解:&apos;);</span><br><span class="line">subs(y,x,4);</span><br><span class="line">ans</span><br><span class="line">//2.创建一个5x5随机矩阵并求其逆</span><br><span class="line">a=rand(5);</span><br><span class="line">a1=inv(a);</span><br><span class="line"> disp(&apos;5x5随机矩阵&apos;);</span><br><span class="line">a</span><br><span class="line"> disp(&apos;5x5随机矩阵的逆&apos;);</span><br><span class="line">a1</span><br></pre></td></tr></table></figure>
+        <p>##概述：</p>
+<p>在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。</p>
+<p>1.init进程是Android启动后，由于系统内核启动的第一个用户级进程<br><img src="/2017/12/20/start-init/start_init.png" alt="图片加载失败"></p>
+<p>2.init进程的工作内容</p>
+<ul>
+<li>1.分析并执行init.rc文件</li>
+<li>2.生成设备驱动节点</li>
+<li>3.处理子进程终止操作</li>
+<li>4.提供属性服务</li>
+<li>5.保存系统运行所需的环境变量</li>
+</ul>
+<p>3.init进程在生成输出设备之后，开始解析init.rc文件。init.rc文件是在init进程启动之后执行的启动脚本,文件记录着init进程执行的功能。解析init.rc文件生成对应的服务列表（service_list）和动作列表(action_list)</p>
+<ul>
+<li>动作列表（action_list）：<br>主要设置环境变量，生成系统运行所需的文件或则目录，修改相应的权限，并挂载与系统运行相关的目录。（例如设置不同类型的应用程序的终止优先权 ,优先权越大越容易被杀:<br>前台程序&lt;仅显示非运行的程序&lt;服务Daemon&lt;注册到开始画面的程序&lt;最小化的程序&lt;内容提供者)</li>
+<li>服务列表（service_list）：<br>用来记录init进程启动的进程，由init进程启动的子进程或是一次性程序，或是运行再后台的与应用程序，系统管理相关的Daemon进程。（例如：sh，adbd，servicemanager，mediaserver,installd,zygote）</li>
+</ul>
+<p><em>sh：搭载Android的机器终端，连接串口或adbd时提供控制台的输入输出的shell程序<br>adbd：指Android Debug Bridge 运行在目标机器上充当服务器，连接的PC等充当adb的客户端。<br>servicemanager：是Android中比较重要的进程，在init进程启动后启动。用来管理系统中的服务。<br>installd :Installer的Socket服务端,用来解压apk文件的解压与数据目录的创建</em></p>
 
       
     </div>
@@ -343,7 +360,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Matlab/" rel="tag"># Matlab</a>
+            <a href="/tags/Android基础/" rel="tag"># Android基础</a>
           
         </div>
       
@@ -356,15 +373,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/11/11/start-linux/" rel="next" title="Linux启动流程">
+                <i class="fa fa-chevron-left"></i> Linux启动流程
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/01/14/git-one/" rel="prev" title="Git的本地操作">
-                Git的本地操作 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
