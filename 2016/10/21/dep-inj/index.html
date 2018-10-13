@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="&amp;nbsp; &amp;nbsp; 前面的话：提到依赖注入，大家都会想到老马(Michael Mattson)那篇经典的文章。其实，本文就是相当于对那篇文章的解读。所以，如果您对原文已经有了非常深刻的理解，完全不需要再看此文；但是，如果您和笔者一样，以前曾经看过，似乎看懂了，但似乎又没抓到什么要领，不妨看看笔者这个解读，也许对您理解原文有一定帮助。 1.依赖在哪里   &amp;nbsp; &amp;nbsp;  老马">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度理解依赖注入（Dependence Injection）">
+<meta property="og:url" content="http://yoursite.com/2016/10/21/dep-inj/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="&amp;nbsp; &amp;nbsp; 前面的话：提到依赖注入，大家都会想到老马(Michael Mattson)那篇经典的文章。其实，本文就是相当于对那篇文章的解读。所以，如果您对原文已经有了非常深刻的理解，完全不需要再看此文；但是，如果您和笔者一样，以前曾经看过，似乎看懂了，但似乎又没抓到什么要领，不妨看看笔者这个解读，也许对您理解原文有一定帮助。 1.依赖在哪里   &amp;nbsp; &amp;nbsp;  老马">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.blog.csdn.net/20161031191622526">
+<meta property="og:image" content="http://img.blog.csdn.net/20161031191940030">
+<meta property="og:image" content="http://img.blog.csdn.net/20161031192643634">
+<meta property="og:updated_time" content="2018-10-13T01:56:08.253Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度理解依赖注入（Dependence Injection）">
+<meta name="twitter:description" content="&amp;nbsp; &amp;nbsp; 前面的话：提到依赖注入，大家都会想到老马(Michael Mattson)那篇经典的文章。其实，本文就是相当于对那篇文章的解读。所以，如果您对原文已经有了非常深刻的理解，完全不需要再看此文；但是，如果您和笔者一样，以前曾经看过，似乎看懂了，但似乎又没抓到什么要领，不妨看看笔者这个解读，也许对您理解原文有一定帮助。 1.依赖在哪里   &amp;nbsp; &amp;nbsp;  老马">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20161031191622526">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/10/21/dep-inj/"/>
+
+
+
+
+
+  <title>深度理解依赖注入（Dependence Injection） | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/21/dep-inj/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深度理解依赖注入（Dependence Injection）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-10-21T19:30:43+08:00">
+                2016-10-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p> &nbsp; &nbsp; 前面的话：提到依赖注入，大家都会想到老马(Michael Mattson)那篇经典的文章。其实，本文就是相当于对那篇文章的解读。所以，如果您对原文已经有了非常深刻的理解，完全不需要再看此文；但是，如果您和笔者一样，以前曾经看过，似乎看懂了，但似乎又没抓到什么要领，不妨看看笔者这个解读，也许对您理解原文有一定帮助。</p>
+<h2 id="1-依赖在哪里"><a href="#1-依赖在哪里" class="headerlink" title="1.依赖在哪里"></a>1.依赖在哪里</h2><p>   &nbsp; &nbsp;  老马举了一个小例子，是开发一个电影列举器（MovieList），这个电影列举器需要使用一个电影查找器（MovieFinder）提供的服务，伪码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> /*服务的接口*/</span><br><span class="line"> public interface MovieFinder &#123;</span><br><span class="line">     ArrayList findAll();</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> /*服务的消费者*/</span><br><span class="line"> class MovieLister</span><br><span class="line"> &#123;</span><br><span class="line">    public Movie[] moviesDirectedBy(String arg) &#123;</span><br><span class="line">        List allMovies = finder.findAll();</span><br><span class="line">        for (Iterator it = allMovies.iterator(); it.hasNext();) &#123;</span><br><span class="line">            Movie movie = (Movie) it.next();</span><br><span class="line">            if (!movie.getDirector().equals(arg)) it.remove();</span><br><span class="line">        &#125;</span><br><span class="line">        return (Movie[]) allMovies.toArray(new Movie[allMovies.size()]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    /*消费者内部包含一个将指向具体服务类型的实体对象*/</span><br><span class="line">    private MovieFinder finder;</span><br><span class="line">    /*消费者需要在某一个时刻去实例化具体的服务。这是我们要解耦的关键所在，</span><br><span class="line">     *因为这样的处理方式造成了服务消费者和服务提供者的强耦合关系（这种耦合是在编译期就确定下来的）。</span><br><span class="line">     **/</span><br><span class="line">    public MovieLister() &#123;</span><br><span class="line">        finder = new ColonDelimitedMovieFinder(&quot;movies1.txt&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> &nbsp; &nbsp; 从上面代码的注释中可以看到，MovieLister和ColonDelimitedMovieFinder（这可以使任意一个实现了MovieFinder接口的类型）之间存在强耦合关系，如下图所示(图1)：<br><img src="http://img.blog.csdn.net/20161031191622526" alt="这里写图片描述"></p>
+<p>这使得MovieList很难作为一个成熟的组件去发布，因为在不同的应用环境中（包括同一套软件系统被不同用户使用的时候），它所要依赖的电影查找器可能是千差万别的。所以，为了能实现真正的基于组件的开发，必须有一种机制能同时满足下面两个要求：</p>
+<p> （1）解除MovieList对具体MoveFinder类型的强依赖（编译期依赖）。</p>
+<p> （2）在运行的时候为MovieList提供正确的MovieFinder类型的实例。<br> &nbsp; &nbsp; 换句话说，就是在运行的时候才产生MovieList和MovieFinder之间的依赖关系（把这种依赖关系在一个合适的时候“注入”运行时），这恐怕就是Dependency Injection这个术语的由来。再换句话说，我们提到过解除强依赖，这并不是说MovieList和MovieFinder之间的依赖关系不存在了，事实上MovieList无论如何也需要某类MovieFinder提供的服务，我们只是把这种依赖的建立时间推后了，从编译器推迟到运行时了。<br>    &nbsp; &nbsp;依赖关系在OO程序中是广泛存在的，只要A类型中用到了B类型实例，A就依赖于B。前面笔者谈到的内容是把概念抽象到了服务使用者和服务提供者的角度，这也符合现在SOA的设计思路。从另一种抽象方式上来看，可以把MovieList看成我们要构建的主系统，而MovieFinder是系统中的plugin，主系统并不强依赖于任何一个插件，但一旦插件被加载，主系统就应该可以准确调用适当插件的功能。<br> &nbsp; &nbsp;   其实不管是面向服务的编程模式，还是基于插件的框架式编程，为了实现松耦合（服务调用者和提供者之间的or框架和插件之间的），都需要在必要的位置实现面向接口编程，在此基础之上，还应该有一种方便的机制实现具体类型之间的运行时绑定，这就是DI所要解决的问题。</p>
+<h2 id="2-DI的实现方式"><a href="#2-DI的实现方式" class="headerlink" title="2.DI的实现方式"></a>2.DI的实现方式</h2><p>   &nbsp; &nbsp;  和上面的图1对应的是，如果我们的系统实现了依赖注入，组件间的依赖关系就变成了图2：<br><img src="http://img.blog.csdn.net/20161031191940030" alt="这里写图片描述"><br> &nbsp; &nbsp; 说白了，就是要提供一个容器，由容器来完成（1）具体ServiceProvider的创建（2）ServiceUser和ServiceProvider的运行时绑定。下面我们就依次来看一下三种典型的依赖注入方式的实现。特别要说明的是，要理解依赖注入的机制，关键是理解容器的实现方式。本文后面给出的容器参考实现，均为黄忠成老师的代码，笔者仅在其中加上了一些关键注释而已。</p>
+<ul>
+<li><p>2.1 Constructor Injection（构造器注入）</p>
+<p>&nbsp; &nbsp;  我们可以看到，在整个依赖注入的数据结构中，涉及到的重要的类型就是ServiceUser, ServiceProvider和Assembler三者，而这里所说的构造器，指的是ServiceUser的构造器。也就是说，在构造ServiceUser实例的时候，才把真正的ServiceProvider传给他：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class MovieLister</span><br><span class="line">&#123;</span><br><span class="line">   //其他内容，省略</span><br><span class="line"></span><br><span class="line">   public MovieLister(MovieFinder finder)</span><br><span class="line">   &#123;</span><br><span class="line">       this.finder = finder;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> &nbsp; &nbsp; 接下来我们看看Assembler应该如何构建：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> private MutablePicoContainer configureContainer() &#123;</span><br><span class="line">     MutablePicoContainer pico = new DefaultPicoContainer();</span><br><span class="line">     </span><br><span class="line">     //下面就是把ServiceProvider和ServiceUser都放入容器的过程，以后就由容器来提供ServiceUser的已完成依赖注入实例，</span><br><span class="line">     //其中用到的实例参数和类型参数一般是从配置档中读取的，这里是个简单的写法。</span><br><span class="line">     //所有的依赖注入方法都会有类似的容器初始化过程，本文在后面的小节中就不再重复这一段代码了。</span><br><span class="line">     Parameter[] finderParams =  &#123;new ConstantParameter(&quot;movies1.txt&quot;)&#125;;</span><br><span class="line">     pico.registerComponentImplementation(MovieFinder.class, ColonMovieFinder.class, finderParams);</span><br><span class="line">     pico.registerComponentImplementation(MovieLister.class);</span><br><span class="line">    //至此，容器里面装入了两个类型，其中没给出构造参数的那一个（MovieLister）将依靠其在构造器中定义的传入参数类型，在容器中</span><br><span class="line">    //进行查找，找到一个类型匹配项即可进行构造初始化。</span><br><span class="line">    return pico;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> &nbsp; &nbsp;需要在强调一下的是，依赖并未消失，只是延后到了容器被构建的时刻。所以正如图2中您已经看到的，容器本身（更准确的说，是一个容器运行实例的构建过程）对ServiceUser和ServiceProvoder都是存在依赖关系的。所以，在这样的体系结构里，ServiceUser、ServiceProvider和容器都是稳定的，互相之间也没有任何依赖关系；所有的依赖关系、所有的变化都被封装进了容器实例的创建过程里，符合我们对服务应用的理解。而且，在实际开发中我们一般会采用配置文件来辅助容器实例的创建，将这种变化性排斥到编译期之外。<br>   即使还没给出后面的代码，你也一定猜得到，这个container类一定有一个GetInstance(Type t)这样的方法，这个方法会为我们返回一个已经注入完毕的MovieLister。 一个简单的应用如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public void testWithPico() </span><br><span class="line">&#123;</span><br><span class="line">    MutablePicoContainer pico = configureContainer();</span><br><span class="line">    MovieLister lister = (MovieLister) pico.getComponentInstance(MovieLister.class);</span><br><span class="line">    Movie[] movies = lister.moviesDirectedBy(&quot;Sergio Leone&quot;);</span><br><span class="line">    assertEquals(&quot;Once Upon a Time in the West&quot;, movies[0].getTitle());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&nbsp; &nbsp;上面最关键的就是对pico.getComponentInstance的调用。Assembler会在这个时候调用MovieLister的构造器，构造器的参数就是当时通过<code>pico.registerComponentImplementation(MovieFinder.class, ColonMovieFinder.class, finderParams)</code>设置进去的实际的ServiceProvider–ColonMovieFinder。下面请看这个容器的参考代码：<br>构造注入所需容器的伪码</p>
+<ul>
+<li><p>2.2 Setter Injection（设值注入）</p>
+<p>&nbsp; &nbsp;这种注入方式和构造注入实在很类似，唯一的区别就是前者在构造函数的调用过程中进行注入，而它是通过给属性赋值来进行注入。无怪乎PicoContainer和Spring都是同时支持这两种注入方式。Spring对通过XML进行配置有比较好的支持，也使得Spring中更常使用设值注入的方式：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> &lt;beans&gt;</span><br><span class="line">    &lt;bean id=&quot;MovieLister&quot; class=&quot;spring.MovieLister&quot;&gt;</span><br><span class="line">         &lt;property name=&quot;finder&quot;&gt;</span><br><span class="line">             &lt;ref local=&quot;MovieFinder&quot;/&gt;</span><br><span class="line">         &lt;/property&gt;</span><br><span class="line">     &lt;/bean&gt;</span><br><span class="line">     &lt;bean id=&quot;MovieFinder&quot; class=&quot;spring.ColonMovieFinder&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;filename&quot;&gt;</span><br><span class="line">            &lt;value&gt;movies1.txt&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>&nbsp; &nbsp;下面也给出支持设值注入的容器参考实现，大家可以和构造器注入的容器对照起来看，里面的差别很小，主要的差别就在于，在获取对象实例（GetInstance）的时候，前者是通过反射得到待创建类型的构造器信息，然后根据构造器传入参数的类型在容器中进行查找，并构造出合适的实例；而后者是通过反射得到待创建类型的所有属性，然后根据属性的类型在容器中查找相应类型的实例。</p>
+<p>设值注入的容器实现伪码</p>
+<ul>
+<li><p>2.3 Interface Injection (接口注入)</p>
+<p>这是笔者认为最不够优雅的一种依赖注入方式。要实现接口注入，首先ServiceProvider要给出一个接口定义：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface InjectFinder &#123;</span><br><span class="line">    void injectFinder(MovieFinder finder);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，ServiceUser必须实现这个接口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class MovieLister: InjectFinder</span><br><span class="line">&#123;</span><br><span class="line">   public void injectFinder(MovieFinder finder) &#123;</span><br><span class="line">      this.finder = finder;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>容器所要做的，就是根据接口定义调用其中的inject方法完成注入过程，这里就不在赘述了，总的原理和上面两种依赖注入模式没有太多区别。</p>
+<ul>
+<li><p>2.4  除了DI，还有Service Locator</p>
+<p>&nbsp; &nbsp; 上面提到的依赖注入只是消除ServiceUser和ServiceProvider之间的依赖关系的一种方法，还有另一种方法：服务定位器（Service Locator）。也就是说，由ServiceLocator来专门负责提供具体的ServiceProvider。当然，这样的话ServiceUser不仅要依赖于服务的接口，还依赖于ServiceContract。仍然是最早提到过的电影列举器的例子，如果使用Service Locator来解除依赖的话，整个依赖关系应当如下图所示(图3)：<br><img src="http://img.blog.csdn.net/20161031192643634" alt="这里写图片描述"><br>&nbsp; &nbsp;用起来也很简单，在一个适当的位置（比如在一组相关服务即将被调用之前）对ServiceLocator进行初始化，用到的时候就直接用ServiceLocator返回ServiceProvider实例：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//服务定位器的初始化</span><br><span class="line">ServiceLocator locator = new ServiceLocator();</span><br><span class="line">locator.loadService(&quot;MovieFinder&quot;, new ColonMovieFinder(&quot;movies1.txt&quot;));</span><br><span class="line">ServiceLocator.load(locator);</span><br><span class="line"></span><br><span class="line">//服务定义器的使用</span><br><span class="line">//其实这个使用方式体现了服务定位器和依赖注入模式的最大差别：ServiceUser需要显示的调用ServiceLocator，从而获取自己需要的服务对象；</span><br><span class="line">//而依赖注入则是隐式的由容器完成了这一切。</span><br><span class="line">MovieFinder finder = (MovieFinder) ServiceLocator.getService(&quot;MovieFinder&quot;);</span><br></pre></td></tr></table></figure>
+<p>  &nbsp; &nbsp;正因为上面提到过的ServiceUser对ServiceLocator的依赖性，从提高模块的独立性（比如说，你可能把你构造的ServiceUser或者ServiceProvider给第三方使用）上来说，依赖注入可能更好一些，这恐怕也是为什么大多数的IOC框架都选用了DI的原因。ServiceLocator最大的优点可能在于实现起来非常简单，如果您开发的应用没有复杂到需要采用一个IOC框架的程度，也许您可以试着采用它。</p>
+<h2 id="3-广义的服务"><a href="#3-广义的服务" class="headerlink" title="3.广义的服务"></a>3.广义的服务</h2><p>   文中很多地方提到服务使用者（ServiceUser）和服务提供者（ServiceProvider）的概念，这里的“服务”是一种非常广义的概念，在语法层面就是指最普通的依赖关系（类型A中有一个B类型的变量，则A依赖于B）。如果您把服务理解为WCF或者Web Service中的那种服务概念，您会发现上面所说的所有技术手段都是没有意义的。以WCF而论，其客户端和服务器端本就是依赖于Contract的松耦合关系，其实这也从另一个角度说明了SOA应用的优势所在。</p>
+<blockquote>
+<p>原文地址:<a href="http://www.cnblogs.com/xingyukun/archive/2007/10/20/931331.html" target="_blank" rel="noopener">深度理解依赖注入（Dependence Injection）</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/20/java-thread-runnable/" rel="next" title="Java多线程之Runnable VS Thread及其资源共享问题">
+                <i class="fa fa-chevron-left"></i> Java多线程之Runnable VS Thread及其资源共享问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/07/as-jcenter/" rel="prev" title="Android Studio发布library到jCenter(问题集合)">
+                Android Studio发布library到jCenter(问题集合) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-依赖在哪里"><span class="nav-number">1.</span> <span class="nav-text">1.依赖在哪里</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-DI的实现方式"><span class="nav-number">2.</span> <span class="nav-text">2.DI的实现方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-广义的服务"><span class="nav-number">3.</span> <span class="nav-text">3.广义的服务</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

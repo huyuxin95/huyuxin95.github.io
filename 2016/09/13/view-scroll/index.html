@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Android设备平面直角坐标系  在做分析之前，首先要建立起Android设备屏幕的平面直角坐标系概念。在Android手机中，屏幕的直角坐标轴概念简单来说： 屏幕左上角为直角坐标系的原点(0,0)从原点出发向左为X轴负方向，向右为X轴正方向从原点出发向上为Y轴负方向，向下为Y轴正方向 上述概念可通过如下图总结：  在Android中，我们通常说View在屏幕上的坐标，其实就是view的左上的">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android分析View的scrollBy()和scrollTo()的参数正负问题原理分析">
+<meta property="og:url" content="http://yoursite.com/2016/09/13/view-scroll/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="Android设备平面直角坐标系  在做分析之前，首先要建立起Android设备屏幕的平面直角坐标系概念。在Android手机中，屏幕的直角坐标轴概念简单来说： 屏幕左上角为直角坐标系的原点(0,0)从原点出发向左为X轴负方向，向右为X轴正方向从原点出发向上为Y轴负方向，向下为Y轴正方向 上述概念可通过如下图总结：  在Android中，我们通常说View在屏幕上的坐标，其实就是view的左上的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.blog.csdn.net/20160913164651287">
+<meta property="og:updated_time" content="2018-10-13T02:01:12.102Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android分析View的scrollBy()和scrollTo()的参数正负问题原理分析">
+<meta name="twitter:description" content="Android设备平面直角坐标系  在做分析之前，首先要建立起Android设备屏幕的平面直角坐标系概念。在Android手机中，屏幕的直角坐标轴概念简单来说： 屏幕左上角为直角坐标系的原点(0,0)从原点出发向左为X轴负方向，向右为X轴正方向从原点出发向上为Y轴负方向，向下为Y轴正方向 上述概念可通过如下图总结：  在Android中，我们通常说View在屏幕上的坐标，其实就是view的左上的">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160913164651287">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/09/13/view-scroll/"/>
+
+
+
+
+
+  <title>Android分析View的scrollBy()和scrollTo()的参数正负问题原理分析 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/13/view-scroll/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android分析View的scrollBy()和scrollTo()的参数正负问题原理分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-13T16:56:03+08:00">
+                2016-09-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>Android设备平面直角坐标系</li>
+</ul>
+<p>在做分析之前，首先要建立起Android设备屏幕的平面直角坐标系概念。在Android手机中，屏幕的直角坐标轴概念简单来说：<br><img src="http://img.blog.csdn.net/20160913164651287" alt="这里写图片描述"></p>
+<p>屏幕左上角为直角坐标系的原点(0,0)从原点出发向左为X轴负方向，向右为X轴正方向从原点出发向上为Y轴负方向，向下为Y轴正方向</p>
+<p>上述概念可通过如下图总结：</p>
+<p> 在Android中，我们通常说View在屏幕上的坐标，其实就是view的左上的坐标。调用View的invalidate()方法会促使View重绘。<br>View的scrollBy()和scrollTo()<br>在分析scrollBy()和scrollTo()之前，先上一段源码片段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Set the scrolled position of your view. This will cause a call to</span><br><span class="line"> * &#123;@link #onScrollChanged(int, int, int, int)&#125; and the view will be</span><br><span class="line"> * invalidated.</span><br><span class="line"> * @param x the x position to scroll to</span><br><span class="line"> * @param y the y position to scroll to</span><br><span class="line"> */</span><br><span class="line">public void scrollTo(int x, int y) &#123;</span><br><span class="line">    if (mScrollX != x || mScrollY != y) &#123;</span><br><span class="line">        int oldX = mScrollX;</span><br><span class="line">        int oldY = mScrollY;</span><br><span class="line">        mScrollX = x;</span><br><span class="line">        mScrollY = y;</span><br><span class="line">        invalidateParentCaches();</span><br><span class="line">        onScrollChanged(mScrollX, mScrollY, oldX, oldY);</span><br><span class="line">        if (!awakenScrollBars()) &#123;</span><br><span class="line">            invalidate(true);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Move the scrolled position of your view. This will cause a call to</span><br><span class="line"> * &#123;@link #onScrollChanged(int, int, int, int)&#125; and the view will be</span><br><span class="line"> * invalidated.</span><br><span class="line"> * @param x the amount of pixels to scroll by horizontally</span><br><span class="line"> * @param y the amount of pixels to scroll by vertically</span><br><span class="line"> */</span><br><span class="line">public void scrollBy(int x, int y) &#123;</span><br><span class="line">    scrollTo(mScrollX + x, mScrollY + y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>scrollBy()和scrollTo()的滚动不同点<br>scrollTo(x, y)：通过invalidate使view直接滚动到参数x和y所标定的坐标scrollBy(x, y)：通过相对于当前坐标的滚动。从上面代码中，很容以就能看出scrollBy()的方法体只有调用scrollTo()方法的一行代码，scrollBy()方法先对属性mScollX加上参数x和属性mScrollY加上参数y，然后将上述结果作为参数传入调用方法scrollTo()<br>scrollBy()和scrollTo()的参数正负影响滚动问题<br>scrollBy()和scrollTo()在参数为负的时候，向坐标轴正方向滚动；当参数为正的时候，向坐标轴负方向滚动。而作为我们的认知，应该是参数为负的时候，向坐标轴负方向滚动；当参数为正的时候，向坐标轴正方向滚动。</p>
+<p>那为什么这两个方法传入参数和引起的滚动方向和我们平常的认知不同呢？</p>
+<p>下面就让我们带着这个问题跟随源码分析。如果不想从它的执行过程一步步的去分析，可以直接看本文的最后一段源码。</p>
+<ul>
+<li>源码执行过程分析</li>
+</ul>
+<p>因为scrollBy(x, y)方法体只有一行，并且是调用scrollTo(x, y)，所以我们只要通过scrollTo(x, y)来进行分析就可以了。</p>
+<p>在scrollTo(x, y)中，x和y分别被赋值给了mScrollX和mScrollY，最后调用了方法invalidate(true)。貌似到了这里就无路可走了，其实不然，我们知道invalidate这个方法会通知View进行重绘。</p>
+<p>那么接下来，我们就可以跳过scrollTo(x, y)去分析View的draw()方法了。照例，在分析onDraw方法之前上一段源码片段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Manually render this view (and all of its children) to the given Canvas.</span><br><span class="line"> * The view must have already done a full layout before this function is</span><br><span class="line"> * called.  When implementing a view, implement</span><br><span class="line"> * &#123;@link #onDraw(android.graphics.Canvas)&#125; instead of overriding this method.</span><br><span class="line"> * If you do need to override this method, call the superclass version.</span><br><span class="line"> *</span><br><span class="line"> * @param canvas The Canvas to which the View is rendered.</span><br><span class="line"> */</span><br><span class="line">public void draw(Canvas canvas) &#123;</span><br><span class="line">    if (ViewDebug.TRACE_HIERARCHY) &#123;</span><br><span class="line">        ViewDebug.trace(this, ViewDebug.HierarchyTraceType.DRAW);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    final int privateFlags = mPrivateFlags;</span><br><span class="line">    final boolean dirtyOpaque = (privateFlags &amp; DIRTY_MASK) == DIRTY_OPAQUE &amp;&amp;</span><br><span class="line">            (mAttachInfo == null || !mAttachInfo.mIgnoreDirtyState);</span><br><span class="line">    mPrivateFlags = (privateFlags &amp; ~DIRTY_MASK) | DRAWN;</span><br><span class="line"></span><br><span class="line">    /*</span><br><span class="line">     * Draw traversal performs several drawing steps which must be executed</span><br><span class="line">     * in the appropriate order:</span><br><span class="line">     *</span><br><span class="line">     *      1. Draw the background</span><br><span class="line">     *      2. If necessary, save the canvas&apos; layers to prepare for fading</span><br><span class="line">     *      3. Draw view&apos;s content</span><br><span class="line">     *      4. Draw children</span><br><span class="line">     *      5. If necessary, draw the fading edges and restore layers</span><br><span class="line">     *      6. Draw decorations (scrollbars for instance)</span><br><span class="line">     */</span><br><span class="line"></span><br><span class="line">    // Step 1, draw the background, if needed</span><br><span class="line">    int saveCount;</span><br><span class="line"></span><br><span class="line">    if (!dirtyOpaque) &#123;</span><br><span class="line">        final Drawable background = mBGDrawable;</span><br><span class="line">        if (background != null) &#123;</span><br><span class="line">            final int scrollX = mScrollX;</span><br><span class="line">            final int scrollY = mScrollY;</span><br><span class="line"></span><br><span class="line">            if (mBackgroundSizeChanged) &#123;</span><br><span class="line">                background.setBounds(0, 0,  mRight - mLeft, mBottom - mTop);</span><br><span class="line">                mBackgroundSizeChanged = false;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if ((scrollX | scrollY) == 0) &#123;</span><br><span class="line">                background.draw(canvas);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                canvas.translate(scrollX, scrollY);</span><br><span class="line">                background.draw(canvas);</span><br><span class="line">                canvas.translate(-scrollX, -scrollY);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // skip step 2 &amp; 5 if possible (common case)</span><br><span class="line">    final int viewFlags = mViewFlags;</span><br><span class="line">    boolean horizontalEdges = (viewFlags &amp; FADING_EDGE_HORIZONTAL) != 0;</span><br><span class="line">    boolean verticalEdges = (viewFlags &amp; FADING_EDGE_VERTICAL) != 0;</span><br><span class="line">    if (!verticalEdges &amp;&amp; !horizontalEdges) &#123;</span><br><span class="line">        // Step 3, draw the content</span><br><span class="line">        if (!dirtyOpaque) onDraw(canvas);</span><br><span class="line"></span><br><span class="line">        // Step 4, draw the children</span><br><span class="line">        dispatchDraw(canvas);</span><br><span class="line"></span><br><span class="line">        // Step 6, draw decorations (scrollbars)</span><br><span class="line">        onDrawScrollBars(canvas);</span><br><span class="line"></span><br><span class="line">        // we&apos;re done...</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /*</span><br><span class="line">     * Here we do the full fledged routine...</span><br><span class="line">     * (this is an uncommon case where speed matters less,</span><br><span class="line">     * this is why we repeat some of the tests that have been</span><br><span class="line">     * done above)</span><br><span class="line">     */</span><br><span class="line"></span><br><span class="line">    boolean drawTop = false;</span><br><span class="line">    boolean drawBottom = false;</span><br><span class="line">    boolean drawLeft = false;</span><br><span class="line">    boolean drawRight = false;</span><br><span class="line"></span><br><span class="line">    float topFadeStrength = 0.0f;</span><br><span class="line">    float bottomFadeStrength = 0.0f;</span><br><span class="line">    float leftFadeStrength = 0.0f;</span><br><span class="line">    float rightFadeStrength = 0.0f;</span><br><span class="line"></span><br><span class="line">    // Step 2, save the canvas&apos; layers</span><br><span class="line">    int paddingLeft = mPaddingLeft;</span><br><span class="line"></span><br><span class="line">    final boolean offsetRequired = isPaddingOffsetRequired();</span><br><span class="line">    if (offsetRequired) &#123;</span><br><span class="line">        paddingLeft += getLeftPaddingOffset();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int left = mScrollX + paddingLeft;</span><br><span class="line">    int right = left + mRight - mLeft - mPaddingRight - paddingLeft;</span><br><span class="line">    int top = mScrollY + getFadeTop(offsetRequired);</span><br><span class="line">    int bottom = top + getFadeHeight(offsetRequired);</span><br><span class="line"></span><br><span class="line">    if (offsetRequired) &#123;</span><br><span class="line">        right += getRightPaddingOffset();</span><br><span class="line">        bottom += getBottomPaddingOffset();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    final ScrollabilityCache scrollabilityCache = mScrollCache;</span><br><span class="line">    final float fadeHeight = scrollabilityCache.fadingEdgeLength;        </span><br><span class="line">    int length = (int) fadeHeight;</span><br><span class="line"></span><br><span class="line">    // clip the fade length if top and bottom fades overlap</span><br><span class="line">    // overlapping fades produce odd-looking artifacts</span><br><span class="line">    if (verticalEdges &amp;&amp; (top + length &gt; bottom - length)) &#123;</span><br><span class="line">        length = (bottom - top) / 2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // also clip horizontal fades if necessary</span><br><span class="line">    if (horizontalEdges &amp;&amp; (left + length &gt; right - length)) &#123;</span><br><span class="line">        length = (right - left) / 2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (verticalEdges) &#123;</span><br><span class="line">        topFadeStrength = Math.max(0.0f, Math.min(1.0f, getTopFadingEdgeStrength()));</span><br><span class="line">        drawTop = topFadeStrength * fadeHeight &gt; 1.0f;</span><br><span class="line">        bottomFadeStrength = Math.max(0.0f, Math.min(1.0f, getBottomFadingEdgeStrength()));</span><br><span class="line">        drawBottom = bottomFadeStrength * fadeHeight &gt; 1.0f;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (horizontalEdges) &#123;</span><br><span class="line">        leftFadeStrength = Math.max(0.0f, Math.min(1.0f, getLeftFadingEdgeStrength()));</span><br><span class="line">        drawLeft = leftFadeStrength * fadeHeight &gt; 1.0f;</span><br><span class="line">        rightFadeStrength = Math.max(0.0f, Math.min(1.0f, getRightFadingEdgeStrength()));</span><br><span class="line">        drawRight = rightFadeStrength * fadeHeight &gt; 1.0f;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    saveCount = canvas.getSaveCount();</span><br><span class="line"></span><br><span class="line">    int solidColor = getSolidColor();</span><br><span class="line">    if (solidColor == 0) &#123;</span><br><span class="line">        final int flags = Canvas.HAS_ALPHA_LAYER_SAVE_FLAG;</span><br><span class="line"></span><br><span class="line">        if (drawTop) &#123;</span><br><span class="line">            canvas.saveLayer(left, top, right, top + length, null, flags);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (drawBottom) &#123;</span><br><span class="line">            canvas.saveLayer(left, bottom - length, right, bottom, null, flags);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (drawLeft) &#123;</span><br><span class="line">            canvas.saveLayer(left, top, left + length, bottom, null, flags);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (drawRight) &#123;</span><br><span class="line">            canvas.saveLayer(right - length, top, right, bottom, null, flags);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        scrollabilityCache.setFadeColor(solidColor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Step 3, draw the content</span><br><span class="line">    if (!dirtyOpaque) onDraw(canvas);</span><br><span class="line"></span><br><span class="line">    // Step 4, draw the children</span><br><span class="line">    dispatchDraw(canvas);</span><br><span class="line"></span><br><span class="line">    // Step 5, draw the fade effect and restore layers</span><br><span class="line">    final Paint p = scrollabilityCache.paint;</span><br><span class="line">    final Matrix matrix = scrollabilityCache.matrix;</span><br><span class="line">    final Shader fade = scrollabilityCache.shader;</span><br><span class="line"></span><br><span class="line">    if (drawTop) &#123;</span><br><span class="line">        matrix.setScale(1, fadeHeight * topFadeStrength);</span><br><span class="line">        matrix.postTranslate(left, top);</span><br><span class="line">        fade.setLocalMatrix(matrix);</span><br><span class="line">        canvas.drawRect(left, top, right, top + length, p);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (drawBottom) &#123;</span><br><span class="line">        matrix.setScale(1, fadeHeight * bottomFadeStrength);</span><br><span class="line">        matrix.postRotate(180);</span><br><span class="line">        matrix.postTranslate(left, bottom);</span><br><span class="line">        fade.setLocalMatrix(matrix);</span><br><span class="line">        canvas.drawRect(left, bottom - length, right, bottom, p);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (drawLeft) &#123;</span><br><span class="line">        matrix.setScale(1, fadeHeight * leftFadeStrength);</span><br><span class="line">        matrix.postRotate(-90);</span><br><span class="line">        matrix.postTranslate(left, top);</span><br><span class="line">        fade.setLocalMatrix(matrix);</span><br><span class="line">        canvas.drawRect(left, top, left + length, bottom, p);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (drawRight) &#123;</span><br><span class="line">        matrix.setScale(1, fadeHeight * rightFadeStrength);</span><br><span class="line">        matrix.postRotate(90);</span><br><span class="line">        matrix.postTranslate(right, top);</span><br><span class="line">        fade.setLocalMatrix(matrix);</span><br><span class="line">        canvas.drawRect(right - length, top, right, bottom, p);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    canvas.restoreToCount(saveCount);</span><br><span class="line"></span><br><span class="line">    // Step 6, draw decorations (scrollbars)</span><br><span class="line">    onDrawScrollBars(canvas);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这段代码片中，我们直接定位到onDrawScrollBars(canvas)方法，找到了这个方法离真相就不远了。上源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * &lt;p&gt;Request the drawing of the horizontal and the vertical scrollbar. The</span><br><span class="line"> * scrollbars are painted only if they have been awakened first.&lt;/p&gt;</span><br><span class="line"> *</span><br><span class="line"> * @param canvas the canvas on which to draw the scrollbars</span><br><span class="line"> *</span><br><span class="line"> * @see #awakenScrollBars(int)</span><br><span class="line"> */</span><br><span class="line">protected final void onDrawScrollBars(Canvas canvas) &#123;</span><br><span class="line">    // scrollbars are drawn only when the animation is running</span><br><span class="line">    final ScrollabilityCache cache = mScrollCache;</span><br><span class="line">    if (cache != null) &#123;</span><br><span class="line"></span><br><span class="line">        int state = cache.state;</span><br><span class="line"></span><br><span class="line">        if (state == ScrollabilityCache.OFF) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        boolean invalidate = false;</span><br><span class="line"></span><br><span class="line">        if (state == ScrollabilityCache.FADING) &#123;</span><br><span class="line">            // We&apos;re fading -- get our fade interpolation</span><br><span class="line">            if (cache.interpolatorValues == null) &#123;</span><br><span class="line">                cache.interpolatorValues = new float[1];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            float[] values = cache.interpolatorValues;</span><br><span class="line"></span><br><span class="line">            // Stops the animation if we&apos;re done</span><br><span class="line">            if (cache.scrollBarInterpolator.timeToValues(values) ==</span><br><span class="line">                    Interpolator.Result.FREEZE_END) &#123;</span><br><span class="line">                cache.state = ScrollabilityCache.OFF;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                cache.scrollBar.setAlpha(Math.round(values[0]));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // This will make the scroll bars inval themselves after</span><br><span class="line">            // drawing. We only want this when we&apos;re fading so that</span><br><span class="line">            // we prevent excessive redraws</span><br><span class="line">            invalidate = true;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // We&apos;re just on -- but we may have been fading before so</span><br><span class="line">            // reset alpha</span><br><span class="line">            cache.scrollBar.setAlpha(255);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        final int viewFlags = mViewFlags;</span><br><span class="line"></span><br><span class="line">        final boolean drawHorizontalScrollBar =</span><br><span class="line">            (viewFlags &amp; SCROLLBARS_HORIZONTAL) == SCROLLBARS_HORIZONTAL;</span><br><span class="line">        final boolean drawVerticalScrollBar =</span><br><span class="line">            (viewFlags &amp; SCROLLBARS_VERTICAL) == SCROLLBARS_VERTICAL</span><br><span class="line">            &amp;&amp; !isVerticalScrollBarHidden();</span><br><span class="line"></span><br><span class="line">        if (drawVerticalScrollBar || drawHorizontalScrollBar) &#123;</span><br><span class="line">            final int width = mRight - mLeft;</span><br><span class="line">            final int height = mBottom - mTop;</span><br><span class="line"></span><br><span class="line">            final ScrollBarDrawable scrollBar = cache.scrollBar;</span><br><span class="line"></span><br><span class="line">            final int scrollX = mScrollX;</span><br><span class="line">            final int scrollY = mScrollY;</span><br><span class="line">            final int inside = (viewFlags &amp; SCROLLBARS_OUTSIDE_MASK) == 0 ? ~0 : 0;</span><br><span class="line"></span><br><span class="line">            int left, top, right, bottom;</span><br><span class="line"></span><br><span class="line">            if (drawHorizontalScrollBar) &#123;</span><br><span class="line">                int size = scrollBar.getSize(false);</span><br><span class="line">                if (size &lt;= 0) &#123;</span><br><span class="line">                    size = cache.scrollBarSize;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                scrollBar.setParameters(computeHorizontalScrollRange(),</span><br><span class="line">                                        computeHorizontalScrollOffset(),</span><br><span class="line">                                        computeHorizontalScrollExtent(), false);</span><br><span class="line">                final int verticalScrollBarGap = drawVerticalScrollBar ?</span><br><span class="line">                        getVerticalScrollbarWidth() : 0;</span><br><span class="line">                top = scrollY + height - size - (mUserPaddingBottom &amp; inside);</span><br><span class="line">                left = scrollX + (mPaddingLeft &amp; inside);</span><br><span class="line">                right = scrollX + width - (mUserPaddingRight &amp; inside) - verticalScrollBarGap;</span><br><span class="line">                bottom = top + size;</span><br><span class="line">                onDrawHorizontalScrollBar(canvas, scrollBar, left, top, right, bottom);</span><br><span class="line">                if (invalidate) &#123;</span><br><span class="line">                    invalidate(left, top, right, bottom);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (drawVerticalScrollBar) &#123;</span><br><span class="line">                int size = scrollBar.getSize(true);</span><br><span class="line">                if (size &lt;= 0) &#123;</span><br><span class="line">                    size = cache.scrollBarSize;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                scrollBar.setParameters(computeVerticalScrollRange(),</span><br><span class="line">                                        computeVerticalScrollOffset(),</span><br><span class="line">                                        computeVerticalScrollExtent(), true);</span><br><span class="line">                switch (mVerticalScrollbarPosition) &#123;</span><br><span class="line">                    default:</span><br><span class="line">                    case SCROLLBAR_POSITION_DEFAULT:</span><br><span class="line">                    case SCROLLBAR_POSITION_RIGHT:</span><br><span class="line">                        left = scrollX + width - size - (mUserPaddingRight &amp; inside);</span><br><span class="line">                        break;</span><br><span class="line">                    case SCROLLBAR_POSITION_LEFT:</span><br><span class="line">                        left = scrollX + (mUserPaddingLeft &amp; inside);</span><br><span class="line">                        break;</span><br><span class="line">                &#125;</span><br><span class="line">                top = scrollY + (mPaddingTop &amp; inside);</span><br><span class="line">                right = left + size;</span><br><span class="line">                bottom = scrollY + height - (mUserPaddingBottom &amp; inside);</span><br><span class="line">                onDrawVerticalScrollBar(canvas, scrollBar, left, top, right, bottom);</span><br><span class="line">                if (invalidate) &#123;</span><br><span class="line">                    invalidate(left, top, right, bottom);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码，我们直接定位到<em>if (drawVerticalScrollBar || drawHorizontalScrollBar)</em>结构语句块。在水平方向滚动与垂直方向滚动语句块中，能够找到一行关键性代码<em>invalidate(left, top, right, bottom)</em>，接着上源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Mark the area defined by the rect (l,t,r,b) as needing to be drawn.</span><br><span class="line"> * The coordinates of the dirty rect are relative to the view.</span><br><span class="line"> * If the view is visible, &#123;@link #onDraw(android.graphics.Canvas)&#125;</span><br><span class="line"> * will be called at some point in the future. This must be called from</span><br><span class="line"> * a UI thread. To call from a non-UI thread, call &#123;@link #postInvalidate()&#125;.</span><br><span class="line"> * @param l the left position of the dirty region</span><br><span class="line"> * @param t the top position of the dirty region</span><br><span class="line"> * @param r the right position of the dirty region</span><br><span class="line"> * @param b the bottom position of the dirty region</span><br><span class="line"> */</span><br><span class="line">public void invalidate(int l, int t, int r, int b) &#123;</span><br><span class="line">    if (ViewDebug.TRACE_HIERARCHY) &#123;</span><br><span class="line">        ViewDebug.trace(this, ViewDebug.HierarchyTraceType.INVALIDATE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (skipInvalidate()) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    if ((mPrivateFlags &amp; (DRAWN | HAS_BOUNDS)) == (DRAWN | HAS_BOUNDS) ||</span><br><span class="line">            (mPrivateFlags &amp; DRAWING_CACHE_VALID) == DRAWING_CACHE_VALID ||</span><br><span class="line">            (mPrivateFlags &amp; INVALIDATED) != INVALIDATED) &#123;</span><br><span class="line">        mPrivateFlags &amp;= ~DRAWING_CACHE_VALID;</span><br><span class="line">        mPrivateFlags |= INVALIDATED;</span><br><span class="line">        mPrivateFlags |= DIRTY;</span><br><span class="line">        final ViewParent p = mParent;</span><br><span class="line">        final AttachInfo ai = mAttachInfo;</span><br><span class="line">        //noinspection PointlessBooleanExpression,ConstantConditions</span><br><span class="line">        if (!HardwareRenderer.RENDER_DIRTY_REGIONS) &#123;</span><br><span class="line">            if (p != null &amp;&amp; ai != null &amp;&amp; ai.mHardwareAccelerated) &#123;</span><br><span class="line">                // fast-track for GL-enabled applications; just invalidate the whole hierarchy</span><br><span class="line">                // with a null dirty rect, which tells the ViewAncestor to redraw everything</span><br><span class="line">                p.invalidateChild(this, null);</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (p != null &amp;&amp; ai != null &amp;&amp; l &lt; r &amp;&amp; t &lt; b) &#123;</span><br><span class="line">            final int scrollX = mScrollX;</span><br><span class="line">            final int scrollY = mScrollY;</span><br><span class="line">            final Rect tmpr = ai.mTmpInvalRect;</span><br><span class="line">            tmpr.set(l - scrollX, t - scrollY, r - scrollX, b - scrollY);</span><br><span class="line">            p.invalidateChild(this, tmpr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>invalidate(left, top, right, bottom)方法体中，倒数第5行<em>tmpr.set(l - scrollX, t - scrollY, r - scrollX, b - scrollY)</em>设置一个view需要绘制的脏矩形，这个方法的传入参数不觉得很奇怪吗？<br><strong>mScrollX和mScrollY都是作为参数的减数（负负得正，负正得负），再结合开头的Android屏幕直角坐标系的概念，通过简单的逻辑分析或者计算就可以证明：当scrollTo()的传入参数为负的时候，view就向坐标轴正方向滚动；当为正的时候，view就向坐标轴负方向滚动。</strong></p>
+<p>原文：<a href="http://www.it165.net/pro/html/201404/12506.html" target="_blank" rel="noopener">Android源码角度分析View的scrollBy()和scrollTo()的参数正负问题</a></p>
+<p>我的博客网站：<a href="http://huyuxin.top/欢迎大家访问！评论！" target="_blank" rel="noopener">http://huyuxin.top/欢迎大家访问！评论！</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/18/git-three/" rel="next" title="Git的查看，对比，撤销，修改，重写">
+                <i class="fa fa-chevron-left"></i> Git的查看，对比，撤销，修改，重写
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/20/java-thread-runnable/" rel="prev" title="Java多线程之Runnable VS Thread及其资源共享问题">
+                Java多线程之Runnable VS Thread及其资源共享问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

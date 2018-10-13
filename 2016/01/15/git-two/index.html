@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Git," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="首先需要了解一下几个命令的作用： 12345git branch //创建分支git tag //给固定的commit做标记git checkout //在固定分支之间进行切换git stash //切换分支之前保存本地修改git merge  //合并分支 分支：个人理解就是在当前工作区间向下衍生的一个分支，类似于继承，具有父节点的内容，不同的是，当分支修改时，原来的衍生体（父结点）不受影响。下">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于Git本地分支与合并的理解">
+<meta property="og:url" content="http://yoursite.com/2016/01/15/git-two/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="首先需要了解一下几个命令的作用： 12345git branch //创建分支git tag //给固定的commit做标记git checkout //在固定分支之间进行切换git stash //切换分支之前保存本地修改git merge  //合并分支 分支：个人理解就是在当前工作区间向下衍生的一个分支，类似于继承，具有父节点的内容，不同的是，当分支修改时，原来的衍生体（父结点）不受影响。下">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115203514859">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115203711832">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115203819682">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115204133852">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115204303136">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115204723452">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115204907164">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115205108487">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115205217691">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115205324287">
+<meta property="og:image" content="http://img.blog.csdn.net/20160115205535529">
+<meta property="og:updated_time" content="2018-10-13T01:35:19.103Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于Git本地分支与合并的理解">
+<meta name="twitter:description" content="首先需要了解一下几个命令的作用： 12345git branch //创建分支git tag //给固定的commit做标记git checkout //在固定分支之间进行切换git stash //切换分支之前保存本地修改git merge  //合并分支 分支：个人理解就是在当前工作区间向下衍生的一个分支，类似于继承，具有父节点的内容，不同的是，当分支修改时，原来的衍生体（父结点）不受影响。下">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160115203514859">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/01/15/git-two/"/>
+
+
+
+
+
+  <title>关于Git本地分支与合并的理解 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/15/git-two/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">关于Git本地分支与合并的理解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-01-15T20:57:28+08:00">
+                2016-01-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>首先需要了解一下几个命令的作用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git branch //创建分支</span><br><span class="line">git tag //给固定的commit做标记</span><br><span class="line">git checkout //在固定分支之间进行切换</span><br><span class="line">git stash //切换分支之前保存本地修改</span><br><span class="line">git merge  //合并分支</span><br></pre></td></tr></table></figure>
+<p>分支：个人理解就是在当前工作区间向下衍生的一个分支，类似于继承，具有父节点的内容，不同的是，当分支修改时，原来的衍生体（父结点）不受影响。<br>下面拿一个简单的例子说一下就明白了：<br>在master下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">git init git_checkout_merge  </span><br><span class="line">cd git_checkout2_merge</span><br><span class="line">vim master.txt     //写入以下内容</span><br><span class="line">Initial commit on master</span><br><span class="line">git add  . //添加到暂存区</span><br><span class="line">git commit –m “Initial commit on master”//提交这次写入</span><br><span class="line">vim master.txt  //再次编辑写入以下内容</span><br><span class="line">Second commit on master</span><br><span class="line">git add .</span><br><span class="line">git commit –m “Second commit on master”</span><br><span class="line">git branch test   //创建一个叫test的分支</span><br><span class="line">git checkout test  //切换到test分支</span><br><span class="line">ls //我们会发现里面有master.txt文件， </span><br><span class="line">vim master.txt //我们会发现他的内容和master下编辑的一样。这就是为什么说类似于继承</span><br><span class="line">Initial commit on test //在后边接着编辑这些内容</span><br><span class="line">touch test.txt  //多创建一个文件更好区分</span><br><span class="line">git add .</span><br><span class="line">git commit –m “Initial commit on test”</span><br></pre></td></tr></table></figure>
+<p>如果你返回master或者关闭git再次打开进入master，打开master.txt，你会发现里面只有<br>Initial commit on master<br>Second commit on master</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log --oneline  --decorate  --groph  - -all  //查看历史示意图</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160115203514859" alt="groph"></p>
+<p>(其中每一次的commit用20位的十六进制SHA-1 Hash值来引用)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config  - -global  - -alias.lol “log --oneline  --decorate  --groph  - -all”</span><br><span class="line">//这样将lol代替log --oneline  --decorate  --groph  - -all，下次输入git lol就可以查看历史示意图</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git tag v1 93fab //后面接上前几位（足以区分的位数）SHA -1 Hash 表示给哪一个commit做标记</span><br><span class="line">git tag v2 //在后面不标明给哪一个commit做标记时是HEAD指向的当前commit如当前的是Second on master</span><br><span class="line">git tag –a “INATIAL_COMMIT”93fa //同样可以做标记，区别在于INATIAL_COMMIT指向的是一个tag对象</span><br><span class="line">git tag //查看所有的tag</span><br><span class="line">git lol //再次查看历史示意图</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160115203711832" alt="git_lol"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout v1 //切换到指定的分支</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://img.blog.csdn.net/20160115203819682" alt="v1"><br><strong>这时系统提示你，你处在于一个detached HEAD状态，HEAD引用直接指向一个commit，而不是一个分支名，再继续工作，切换到别的分支时可能造成数据丢失，同时告诉我们可以通过 git checkout –b &lt;new-branch_name&gt;的方式创建并切换到别的分支，其实git checkout –b &lt;new-branch_name&gt;就是 git branch 和git chechoutl两个命令的组合。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git checkout –b fix_v1  //创建并切换到fix_v1分支</span><br><span class="line">vim master.txt //我们再一次打开编辑并提交</span><br><span class="line">shash1  //写入这些内容（随意）</span><br><span class="line">git add .</span><br><span class="line">git checkout master //如果我们这时候提出切换分支到master</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160115204133852" alt="master1"><br><strong>提示需要先提交这些修改或者将这些修改stash起来</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git stash save –a “stash1“//切换分支之前保存本地修改 –a表示将暂存区一并保存</span><br><span class="line">git checkout master </span><br><span class="line">/**stash之后如何再次回到之前stash的内容呢？**/</span><br><span class="line">git checkout fix_v1</span><br><span class="line">git stash list //查看stash列表</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160115204303136" alt="stash_list1"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git stash pop  - -index stash@&#123;0&#125;  //用- -index将暂存区一并还原</span><br><span class="line">git stash list //你会发现还原后stash 列表被清空了</span><br><span class="line">git stash apply - -index stash@&#123;0&#125;  //还原并不清空stash列表</span><br><span class="line">git stash drop //删除stash list顶层那项</span><br><span class="line">git stash drop stash@&#123;0&#125; //删除stash list的指定项</span><br><span class="line">git stash clear //清空stash 列表</span><br></pre></td></tr></table></figure>
+<h3>本地分支的合并</h3>
+
+<ol>
+<li>fast-farword merge<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git checkout –b test_merge</span><br><span class="line">vim master.txt</span><br><span class="line">Initial commit on test_merge //写入内容</span><br><span class="line">git add .</span><br><span class="line">git commit –m “Initial commit on test_merge”</span><br><span class="line">git checkout master</span><br><span class="line">git merge test_merge</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>因为test_merge衍生自master，所以这一次合并只是将HEAD引用指向test_merge</strong><br><img src="http://img.blog.csdn.net/20160115204723452" alt="merge1"></p>
+<p></p><h4>合并模型：<br><img src="http://img.blog.csdn.net/20160115204907164" alt="merge2"><p></p>
+<ol start="2">
+<li>non-fast-farword merge<br><b>注意示意图文件结构</b></li>
+</ol>
+<p><img src="http://img.blog.csdn.net/20160115205108487" alt="git_lol2"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge test  //如果合并内容有冲突，可以取消在这次合并或者编辑冲突文件</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160115205217691" alt="merge_test"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git merge – abort  //取消在这次合并</span><br><span class="line">vim master.txt    //编辑冲突文件，留下想要的内容</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160115205324287" alt="vi_master.txt"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add master.txt</span><br><span class="line">git commit  //这是系统提示这是merge操作，保存就可以了</span><br></pre></td></tr></table></figure>
+<p></p><h4>合并模型：<br><strong>master此时和test并没有衍生关系，git merge test 会先生成一个commit用来承载两个的内容</strong><br><img src="http://img.blog.csdn.net/20160115205535529" alt="merge_test2"><p></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">//SINCE20160116</span><br></pre></td></tr></table></figure>
+<p>我的博客网站：<a href="http://huyuxin95.github.io/" target="_blank" rel="noopener">http://huyuxin.top/</a>欢迎大家访问！评论！</p>
+</h4></h4>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/14/git-one/" rel="next" title="Git的本地操作">
+                <i class="fa fa-chevron-left"></i> Git的本地操作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/01/18/git-three/" rel="prev" title="Git的查看，对比，撤销，修改，重写">
+                Git的查看，对比，撤销，修改，重写 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">本地分支的合并</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-number">1.1.</span> <span class="nav-text">合并模型：
+
+non-fast-farword merge注意示意图文件结构
+
+
+1git merge test  //如果合并内容有冲突，可以取消在这次合并或者编辑冲突文件
+
+12git merge – abort  //取消在这次合并vim master.txt    //编辑冲突文件，留下想要的内容
+
+12git add master.txtgit commit  //这是系统提示这是merge操作，保存就可以了
+合并模型：master此时和test并没有衍生关系，git merge test 会先生成一个commit用来承载两个的内容
+1//SINCE20160116
+我的博客网站：http://huyuxin.top/欢迎大家访问！评论！
+</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-number">1.2.</span> <span class="nav-text">合并模型：master此时和test并没有衍生关系，git merge test 会先生成一个commit用来承载两个的内容
+1//SINCE20160116
+我的博客网站：http://huyuxin.top/欢迎大家访问！评论！
+</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

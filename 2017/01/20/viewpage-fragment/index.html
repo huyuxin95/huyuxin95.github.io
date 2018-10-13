@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在Android中我们经常会用到ViewPager+Fragment组合。然而，有一个很让人头疼的问题就是，我们去加载数据的时候由于ViewPager的内部机制所限制，所以它会默认至少预加载一个。这让人很郁闷，所以，我就想到要封装一个Fragment来解决这个问题。这里还解决一个问题就是在Android酷炫欢迎页播放视频,仿蚂蜂窝自由行和慕课网这里感谢有一位网友提出了bug,就是在播放视频的时候">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android中ViewPager+Fragment取消(禁止)预加载延迟加载(懒加载)问题解决方案">
+<meta property="og:url" content="http://yoursite.com/2017/01/20/viewpage-fragment/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="在Android中我们经常会用到ViewPager+Fragment组合。然而，有一个很让人头疼的问题就是，我们去加载数据的时候由于ViewPager的内部机制所限制，所以它会默认至少预加载一个。这让人很郁闷，所以，我就想到要封装一个Fragment来解决这个问题。这里还解决一个问题就是在Android酷炫欢迎页播放视频,仿蚂蜂窝自由行和慕课网这里感谢有一位网友提出了bug,就是在播放视频的时候">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.blog.csdn.net/20170120150845423?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2018-10-13T01:58:46.448Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android中ViewPager+Fragment取消(禁止)预加载延迟加载(懒加载)问题解决方案">
+<meta name="twitter:description" content="在Android中我们经常会用到ViewPager+Fragment组合。然而，有一个很让人头疼的问题就是，我们去加载数据的时候由于ViewPager的内部机制所限制，所以它会默认至少预加载一个。这让人很郁闷，所以，我就想到要封装一个Fragment来解决这个问题。这里还解决一个问题就是在Android酷炫欢迎页播放视频,仿蚂蜂窝自由行和慕课网这里感谢有一位网友提出了bug,就是在播放视频的时候">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20170120150845423?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/01/20/viewpage-fragment/"/>
+
+
+
+
+
+  <title>Android中ViewPager+Fragment取消(禁止)预加载延迟加载(懒加载)问题解决方案 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/20/viewpage-fragment/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android中ViewPager+Fragment取消(禁止)预加载延迟加载(懒加载)问题解决方案</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-01-20T11:49:41+08:00">
+                2017-01-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>在Android中我们经常会用到ViewPager+Fragment组合。然而，有一个很让人头疼的问题就是，我们去加载数据的时候由于ViewPager的内部机制所限制，所以它会默认至少预加载一个。这让人很郁闷，所以，我就想到要封装一个Fragment来解决这个问题。<br>这里还解决一个问题就是在<em><a href="http://blog.csdn.net/linglongxin24/article/details/53115253" target="_blank" rel="noopener">Android酷炫欢迎页播放视频,仿蚂蜂窝自由行和慕课网</a></em><br>这里感谢有一位网友提出了bug,就是在播放视频的时候如果滑动到第二页和第三页，第一页的视频还在播放，这是个让人很头疼的问题，在这里也完美解决。</p>
+</blockquote>
+<h2 id="问题初探"><a href="#问题初探" class="headerlink" title="问题初探:"></a>问题初探:</h2><p> 在Fragment可见时请求数据。此方案仍预加载了前后的页面，但是没有请求数据，只有进入到当前Framgent时才请求数据。那么我们在这里去加载数据会怎么样呢？ </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class FragmentSample extends Fragment&#123;</span><br><span class="line">    ...  </span><br><span class="line">    @Override</span><br><span class="line">    public void setUserVisibleHint(boolean isVisibleToUser) &#123;</span><br><span class="line">        super.setUserVisibleHint(isVisibleToUser);</span><br><span class="line">        if (isVisibleToUser) &#123;</span><br><span class="line">            requestData(); // 在此请求数据</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20170120150845423?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRGF5RGF5UGxheVBob25l/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<p>这又是为什么呢？<br>因为ViewPager会加载好多Fragment，为了节省内容等会在Fragment不可见的某个时候调用onDestroyView()将用户界面销毁掉但是Fragment的实例还在，所以可能第一次加载没有问题，<br>但是再次回到第一个Fragment再去加载的时候就会出现UI对用户可见但是视图还没有初始化。</p>
+<h2 id="解决方案一"><a href="#解决方案一" class="headerlink" title="解决方案一:"></a>解决方案一:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line">package cn.bluemobi.dylan.viewpagerfragmentlazyload;</span><br><span class="line"></span><br><span class="line">import android.os.Bundle;</span><br><span class="line">import android.support.annotation.Nullable;</span><br><span class="line">import android.support.v4.app.Fragment;</span><br><span class="line">import android.text.TextUtils;</span><br><span class="line">import android.view.LayoutInflater;</span><br><span class="line">import android.view.View;</span><br><span class="line">import android.view.ViewGroup;</span><br><span class="line">import android.widget.Toast;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Fragment预加载问题的解决方案：</span><br><span class="line"> * 1.可以懒加载的Fragment</span><br><span class="line"> * 2.切换到其他页面时停止加载数据（可选）</span><br><span class="line"> * Created by yuandl on 2016-11-17.</span><br><span class="line"> * blog ：http://blog.csdn.net/linglongxin24/article/details/53205878</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">public abstract class LazyLoadFragment extends Fragment &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 视图是否已经初初始化</span><br><span class="line">     */</span><br><span class="line">    protected boolean isInit = false;</span><br><span class="line">    protected boolean isLoad = false;</span><br><span class="line">    protected final String TAG = &quot;LazyLoadFragment&quot;;</span><br><span class="line">    private View view;</span><br><span class="line"></span><br><span class="line">    @Nullable</span><br><span class="line">    @Override</span><br><span class="line">    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) &#123;</span><br><span class="line">        view = inflater.inflate(setContentView(), container, false);</span><br><span class="line">        isInit = true;</span><br><span class="line">        /**初始化的时候去加载数据**/</span><br><span class="line">        isCanLoadData();</span><br><span class="line">        return view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 视图是否已经对用户可见，系统的方法</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void setUserVisibleHint(boolean isVisibleToUser) &#123;</span><br><span class="line">        super.setUserVisibleHint(isVisibleToUser);</span><br><span class="line">        isCanLoadData();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 是否可以加载数据</span><br><span class="line">     * 可以加载数据的条件：</span><br><span class="line">     * 1.视图已经初始化</span><br><span class="line">     * 2.视图对用户可见</span><br><span class="line">     */</span><br><span class="line">    private void isCanLoadData() &#123;</span><br><span class="line">        if (!isInit) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (getUserVisibleHint()) &#123;</span><br><span class="line">            lazyLoad();</span><br><span class="line">            isLoad = true;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            if (isLoad) &#123;</span><br><span class="line">                stopLoad();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 视图销毁的时候讲Fragment是否初始化的状态变为false</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void onDestroyView() &#123;</span><br><span class="line">        super.onDestroyView();</span><br><span class="line">        isInit = false;</span><br><span class="line">        isLoad = false;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected void showToast(String message) &#123;</span><br><span class="line">        if (!TextUtils.isEmpty(message)) &#123;</span><br><span class="line">            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置Fragment要显示的布局</span><br><span class="line">     *</span><br><span class="line">     * @return 布局的layoutId</span><br><span class="line">     */</span><br><span class="line">    protected abstract int setContentView();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取设置的布局</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    protected View getContentView() &#123;</span><br><span class="line">        return view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 找出对应的控件</span><br><span class="line">     *</span><br><span class="line">     * @param id</span><br><span class="line">     * @param &lt;T&gt;</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    protected &lt;T extends View&gt; T findViewById(int id) &#123;</span><br><span class="line"></span><br><span class="line">        return (T) getContentView().findViewById(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 当视图初始化并且对用户可见的时候去真正的加载数据</span><br><span class="line">     */</span><br><span class="line">    protected abstract void lazyLoad();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 当视图已经对用户不可见并且加载过数据，如果需要在切换到其他页面时停止加载数据，可以覆写此方法</span><br><span class="line">     */</span><br><span class="line">    protected void stopLoad() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用方法:</p>
+<p>LazyLoadFragment是一个抽象类，可以作为BaseFragment,继承它。</p>
+<ul>
+<li>用setContentView()方法去加载要显示的布局</li>
+<li>lazyLoad()方法去加载数据</li>
+<li>stopLoad()方法可选，当视图已经对用户不可见并且加载过数据，如果需要在切换到其他页面时停止加载数据，可以覆写此方法</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package cn.bluemobi.dylan.viewpagerfragmentlazyload;</span><br><span class="line"></span><br><span class="line">import android.util.Log;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line">* Created by yuandl on 2016-11-17.</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">public class Fragment1 extends LazyLoadFragment &#123;</span><br><span class="line"> @Override</span><br><span class="line"> public int setContentView() &#123;</span><br><span class="line">     return R.layout.fm_layout1;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> @Override</span><br><span class="line"> protected void lazyLoad() &#123;</span><br><span class="line">     String message = &quot;Fragment1&quot; + (isInit ? &quot;已经初始并已经显示给用户可以加载数据&quot; : &quot;没有初始化不能加载数据&quot;)+&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&quot;;</span><br><span class="line">     showToast(message);</span><br><span class="line">     Log.d(TAG, message);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> @Override</span><br><span class="line"> protected void stopLoad() &#123;</span><br><span class="line">     Log.d(TAG, &quot;Fragment1&quot; + &quot;已经对用户不可见，可以停止加载数据&quot;);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="解决方案二"><a href="#解决方案二" class="headerlink" title="解决方案二:"></a>解决方案二:</h2><p>直接继承ViewPager，结合PagerAdapter实现懒加载。该方案是我用到的最完善的方法，完全的懒加载，每次只会建立一个Fragment对象。</p>
+<p>开源库：<a href="https://github.com/lianghanzhen/LazyViewPager" target="_blank" rel="noopener">https://github.com/lianghanzhen/LazyViewPager</a></p>
+<p>这个库就4个类，作者通过继承ViewPager（保证其普适性）、自定义ViewPagerAdapter和 LazyFragmentPagerAdapter以及设置懒加载的标记接口，很好的实现了懒加载。感谢作者。</p>
+<p><b>最后提醒一下：</b><br>填充LazyViewPager的Fragment一定要实现接口LazyFragmentPagerAdapter.Laziable。</p>
+<blockquote>
+<p>参考<br><a href="http://www.cnblogs.com/wangfeng520/p/6108189.html" target="_blank" rel="noopener">Android中ViewPager+Fragment取消(禁止)预加载延迟加载(懒加载)问题解决方案</a><br><a href="http://blog.csdn.net/baidu_26654149/article/details/50992748" target="_blank" rel="noopener">实现ViewPager懒加载的三种方法</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/07/as-jcenter/" rel="next" title="Android Studio发布library到jCenter(问题集合)">
+                <i class="fa fa-chevron-left"></i> Android Studio发布library到jCenter(问题集合)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/csharp/" rel="prev" title="C#中的委托和事件">
+                C#中的委托和事件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题初探"><span class="nav-number">1.</span> <span class="nav-text">问题初探:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案一"><span class="nav-number">2.</span> <span class="nav-text">解决方案一:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案二"><span class="nav-number">3.</span> <span class="nav-text">解决方案二:</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

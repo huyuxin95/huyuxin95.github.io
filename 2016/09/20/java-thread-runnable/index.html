@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="对于 Java 多线程编程中的 implements Runnable 与 extends Thread，部分同学可能会比较疑惑，它们之间究竟有啥区别和联系呢？他们是不是没啥区别随便选呢？实际中究竟该选择哪一个呢？ 甚至网上不少博客文章以讹传讹得出不少谬论，那今天的走进科学栏目将带您一一揭开谜底。 1、区别：其实这块主要是围绕着接口和抽象类的区别以及一些设计原则而言的。 1.1 Inheritan">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java多线程之Runnable VS Thread及其资源共享问题">
+<meta property="og:url" content="http://yoursite.com/2016/09/20/java-thread-runnable/index.html">
+<meta property="og:site_name" content="Huyuxin&#39;s Blog">
+<meta property="og:description" content="对于 Java 多线程编程中的 implements Runnable 与 extends Thread，部分同学可能会比较疑惑，它们之间究竟有啥区别和联系呢？他们是不是没啥区别随便选呢？实际中究竟该选择哪一个呢？ 甚至网上不少博客文章以讹传讹得出不少谬论，那今天的走进科学栏目将带您一一揭开谜底。 1、区别：其实这块主要是围绕着接口和抽象类的区别以及一些设计原则而言的。 1.1 Inheritan">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-13T01:31:16.713Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java多线程之Runnable VS Thread及其资源共享问题">
+<meta name="twitter:description" content="对于 Java 多线程编程中的 implements Runnable 与 extends Thread，部分同学可能会比较疑惑，它们之间究竟有啥区别和联系呢？他们是不是没啥区别随便选呢？实际中究竟该选择哪一个呢？ 甚至网上不少博客文章以讹传讹得出不少谬论，那今天的走进科学栏目将带您一一揭开谜底。 1、区别：其实这块主要是围绕着接口和抽象类的区别以及一些设计原则而言的。 1.1 Inheritan">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/09/20/java-thread-runnable/"/>
+
+
+
+
+
+  <title>Java多线程之Runnable VS Thread及其资源共享问题 | Huyuxin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Huyuxin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/20/java-thread-runnable/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="huyuxin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huyuxin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java多线程之Runnable VS Thread及其资源共享问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-20T21:07:16+08:00">
+                2016-09-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>对于 Java 多线程编程中的 implements Runnable 与 extends Thread，部分同学可能会比较疑惑，它们之间究竟有啥区别和联系呢？他们是不是没啥区别随便选呢？实际中究竟该选择哪一个呢？</p>
+<p>甚至网上不少博客文章以讹传讹得出不少谬论，那今天的走进科学栏目将带您一一揭开谜底。</p>
+<h2 id="1、区别："><a href="#1、区别：" class="headerlink" title="1、区别："></a>1、区别：</h2><p>其实这块主要是围绕着接口和抽象类的区别以及一些设计原则而言的。</p>
+<p><strong>1.1 Inheritance Option:</strong>   </p>
+<blockquote>
+<p>The limitation with “extends Thread” approach is that if you extend<br>Thread,  you can not extend anything else . Java does not support<br>multiple inheritance.  In reality , you do not need Thread class<br>behavior , because in order to use a thread you need to instantiate<br>one anyway. On the other hand, Implementing the Runnable interface<br>gives you the choice to extend any class you like , but still define<br>behavior that will be run by separate thread.</p>
+</blockquote>
+<p><strong>1.2 Reusability :</strong> </p>
+<blockquote>
+<p>In “implements Runnable” , we are creating a different Runnable class<br>for a specific behavior  job (if the work you want to be done is job).<br>It gives us the freedom to reuse the specific behavior job whenever<br>required. “extends Thread”  contains both thread and job specific<br>behavior code. Hence once thread completes execution , it can not be<br>restart again.</p>
+</blockquote>
+<p><strong>1.3 Object Oriented Design:</strong>  </p>
+<blockquote>
+<p>Implementing Runnable should be preferred . It does not specializing<br>or modifying the thread behavior . You are giving thread something to<br>run. We conclude that Composition is the better way. Composition means<br>two objects A and B satisfies has-a  relationship. “extends Thread”<br>is not a good Object Oriented practice.</p>
+</blockquote>
+<p><strong>1.4 Loosely-coupled :</strong> </p>
+<blockquote>
+<p>“implements Runnable” makes the code loosely-coupled and easier to<br>read . Because the code is split into two classes . Thread class for<br>the thread specific code and your Runnable implementation class for<br>your job that should be run by a thread code. “extends Thread”  makes<br>the code tightly coupled . Single class contains the thread code as<br>well as the job that needs to be done by the thread.</p>
+</blockquote>
+<p><strong>1.5 Functions overhead :</strong>  </p>
+<blockquote>
+<p>“extends Thread”  means inheriting all the functions of the Thread<br>class which we may do not need .  job can be done easily by Runnable<br>without the Thread class functions overhead.</p>
+</blockquote>
+<p>至此，个人是推荐优先选择  implements Runnable 。</p>
+<h2 id="2、联系："><a href="#2、联系：" class="headerlink" title="2、联系："></a>2、联系：</h2><p>2.1 其实Thread类也是Runnable接口的子类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public class Thread extends Object implements Runnable</span><br></pre></td></tr></table></figure>
+<p>2.2 启动线程都是 start() 方法</p>
+<p>追踪Thread中的start()方法的定义，可以发现此方法中使用了private native void start0();其中native关键字表示可以调用操作系统的底层函数，这样的技术称为JNI技术（java Native Interface）。</p>
+<p>但是在使用Runnable定义的子类中没有start()方法，只有Thread类中才有。此时观察Thread类，有一个构造方法：public Thread(Runnable targer)，此构造方法接受Runnable的子类实例，也就是说可以通过Thread类来启动Runnable实现的多线程。</p>
+<p>但是可以看到它们子线程运行的位置不同，Thread运行在父类的run方法中，Runnable运行在实现Runnable接口的子类对象run方法中。</p>
+<p>2.3 网传的一种缪论：用Runnable就可以实现资源共享，而 Thread 不可以</p>
+<p>有同学的例子是这样的，<br>参考：<a href="http://developer.51cto.com/art/201203/321042.htm：" target="_blank" rel="noopener">http://developer.51cto.com/art/201203/321042.htm：</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package tmp;</span><br><span class="line"></span><br><span class="line">class MyThread extends Thread &#123;</span><br><span class="line"></span><br><span class="line">	private int ticket = 10;</span><br><span class="line">	private String name;</span><br><span class="line"></span><br><span class="line">	public MyThread(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (int i = 0; i &lt; 500; i++) &#123;</span><br><span class="line">			if (this.ticket &gt; 0) &#123;</span><br><span class="line">				System.out.println(this.name + &quot;卖票----&gt;&quot; + (this.ticket--));</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadDemo &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		MyThread mt1 = new MyThread(&quot;一号窗口&quot;);</span><br><span class="line">		MyThread mt2 = new MyThread(&quot;二号窗口&quot;);</span><br><span class="line">		MyThread mt3 = new MyThread(&quot;三号窗口&quot;);</span><br><span class="line">		mt1.start();</span><br><span class="line">		mt2.start();</span><br><span class="line">		mt3.start();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 一号窗口卖票----&gt;10</span><br><span class="line">// 二号窗口卖票----&gt;10</span><br><span class="line">// 二号窗口卖票----&gt;9</span><br><span class="line">// 二号窗口卖票----&gt;8</span><br><span class="line">// 三号窗口卖票----&gt;10</span><br><span class="line">// 三号窗口卖票----&gt;9</span><br><span class="line">// 三号窗口卖票----&gt;8</span><br></pre></td></tr></table></figure>
+<p>Runnable 代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">package tmp;</span><br><span class="line"></span><br><span class="line">class MyThread1 implements Runnable &#123;</span><br><span class="line">	private int ticket = 10;</span><br><span class="line">	private String name;</span><br><span class="line"></span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (int i = 0; i &lt; 500; i++) &#123;</span><br><span class="line">			if (this.ticket &gt; 0) &#123;</span><br><span class="line">				System.out.println(Thread.currentThread().getName() + &quot;卖票----&gt;&quot; + (this.ticket--));</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class RunnableDemo &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		MyThread1 mt = new MyThread1();</span><br><span class="line">		Thread t1 = new Thread(mt, &quot;一号窗口&quot;);</span><br><span class="line">		Thread t2 = new Thread(mt, &quot;二号窗口&quot;);</span><br><span class="line">		Thread t3 = new Thread(mt, &quot;三号窗口&quot;);</span><br><span class="line">		t1.start();</span><br><span class="line">		t2.start();</span><br><span class="line">		t3.start();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 二号窗口卖票----&gt;10</span><br><span class="line">// 三号窗口卖票----&gt;9</span><br><span class="line">// 三号窗口卖票----&gt;7</span><br><span class="line">// 一号窗口卖票----&gt;9</span><br><span class="line">// 三号窗口卖票----&gt;6</span><br><span class="line">// 二号窗口卖票----&gt;8</span><br><span class="line">// 三号窗口卖票----&gt;4</span><br><span class="line">// 一号窗口卖票----&gt;5</span><br><span class="line">// 三号窗口卖票----&gt;2</span><br><span class="line">// 二号窗口卖票----&gt;3</span><br><span class="line">// 一号窗口卖票----&gt;1</span><br></pre></td></tr></table></figure>
+<p>由此差别，有同学就得出了一个结论：用Runnable就可以实现资源共享，而 Thread 不可以，这是他们的主要差别之一。。。</p>
+<p>其实仔细看看代码就知道，这只是两种写法的区别，根本就不是 implements Runnable 与 extends Thread 的区别：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MyThread1 mt = new MyThread1();  </span><br><span class="line">Thread t1 = new Thread(mt,&quot;一号窗口&quot;);  </span><br><span class="line">Thread t2 = new Thread(mt,&quot;二号窗口&quot;);  </span><br><span class="line">Thread t3 = new Thread(mt,&quot;三号窗口&quot;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Thread t1 = new Thread(new MyThread1(),&quot;一号窗口&quot;);  </span><br><span class="line">Thread t2 = new Thread(new MyThread1(),&quot;二号窗口&quot;);  </span><br><span class="line">Thread t3 = new Thread(new MyThread1(),&quot;三号窗口&quot;);</span><br></pre></td></tr></table></figure>
+<p>其实，想要“资源共享”，Thread 也可以做到的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static int ticket = 10;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 三号窗口卖票----&gt;10</span><br><span class="line">// 一号窗口卖票----&gt;9</span><br><span class="line">// 二号窗口卖票----&gt;9</span><br><span class="line">// 一号窗口卖票----&gt;7</span><br><span class="line">// 一号窗口卖票----&gt;5</span><br><span class="line">// 三号窗口卖票----&gt;8</span><br><span class="line">// 一号窗口卖票----&gt;4</span><br><span class="line">// 二号窗口卖票----&gt;6</span><br><span class="line">// 一号窗口卖票----&gt;2</span><br><span class="line">// 三号窗口卖票----&gt;3</span><br><span class="line">// 二号窗口卖票----&gt;1</span><br></pre></td></tr></table></figure>
+<p>通过 static 就可以实现拥有共同的ticket=10，但问题也来了，你会发现一二号窗口都卖了第 9 张票。</p>
+<h2 id="3、资源共享带来的问题：多线程的线程安全问题"><a href="#3、资源共享带来的问题：多线程的线程安全问题" class="headerlink" title="3、资源共享带来的问题：多线程的线程安全问题"></a>3、资源共享带来的问题：多线程的线程安全问题</h2><p>上面的例子以及结果证明了多线程场景下，需要留意线程安全的问题：</p>
+<p>3.1 同步run()方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void run()</span><br></pre></td></tr></table></figure>
+<p>3.2 同步 class 对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">synchronized (Test.class)</span><br></pre></td></tr></table></figure>
+<p>3.3 同步某些静态对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private static final Object countLock = new Object();</span><br><span class="line">synchronized (countLock) &#123;</span><br><span class="line">    count++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.4 最后给个完整的例子，模拟在线售票与查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">package tmp;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.util.concurrent.atomic.AtomicInteger;</span><br><span class="line"></span><br><span class="line">public class Demo implements Runnable &#123;</span><br><span class="line">	String name;</span><br><span class="line">	//	static Integer tickets = 20;</span><br><span class="line">	private static AtomicInteger tickets = new AtomicInteger(20);</span><br><span class="line"></span><br><span class="line">	public Demo(String name) &#123;</span><br><span class="line">		this.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (int i = 1; i &lt;= 20; i++) &#123;</span><br><span class="line">			synchronized (tickets) &#123;</span><br><span class="line">				if (tickets.get() &gt; 0) &#123;</span><br><span class="line">					try &#123;</span><br><span class="line">						Thread.sleep(1000);</span><br><span class="line">					&#125; catch (InterruptedException e) &#123;</span><br><span class="line">					&#125;</span><br><span class="line">					System.out.println(&quot;我取票第&quot; + &quot;: &quot; + tickets.getAndDecrement() + &quot; 张票。&quot;);</span><br><span class="line">					//					tickets--;</span><br><span class="line">					try &#123;</span><br><span class="line">						Thread.sleep(1000);</span><br><span class="line">					&#125; catch (InterruptedException e) &#123;</span><br><span class="line">					&#125;</span><br><span class="line">					System.out.println(&quot;==========现在查询还剩&quot; + &quot;: &quot; + tickets.get() + &quot; 张票。&quot;);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		Demo demo = new Demo(&quot;hello&quot;);</span><br><span class="line">		new Thread(demo).start();</span><br><span class="line">		new Thread(demo).start();</span><br><span class="line">		new Thread(demo).start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到这儿，本期走进科学也要跟大家说声再见了，其实聊着聊着感觉都快跑题了，多线程这块话题很多，很复杂，需要慢慢实践与积累，祝大家玩的愉快。</p>
+<h2 id="4、附：白话并发"><a href="#4、附：白话并发" class="headerlink" title="4、附：白话并发"></a>4、附：白话并发</h2><p>办公室只有一个卫生间，一次只能容纳一个人方便，这个卫生间就是竞争条件（Race Condition）。当一个人进去后就在门口牌子上标识为“有人”，这个就相当于是线程的加锁，告诉其它同时间想要上厕所的人，这个资源已被我占位，其他人就需要等待，这叫wait。只有当前面的人出来后，并把牌子置为“无人”时，其它人才有机会使用。当只有一个蹲位时，一次只能进一个人，翻动一块牌子加一把锁，这个就叫互斥锁（Mutex）。如果卫生间里有多个蹲位，再简单地用一块牌子来标识就不行了，需要做一个电子公告牌，进去一个人电子公告牌就把可用数量减1，出来一个人数量加1，数量不为0时，有人来直接进去就行了不用等待，这个叫信号量（Semaphores）。如果出来的人是随机通知等待的某一个人，这叫notify，如果他是对着所有等待的人喊一嗓子，就是notifyAll。如果使用notify，有些倒霉的家伙可能永远也不会被通知到，这太不人性了，而如果使用nofityAll就意味着所有等待的人需要竞争资源，还是会在倒霉蛋永远轮不到。解决的办法一是按时间顺序先到先得，顺序进入，火车站的厕所经常会看到这种情况，总是有机会轮到自己，这叫公平锁（FairLock）。还有一种情况，就是大老板也在排队，一般情况下大老板时间宝贵，可以优先考虑让他先上，这叫线程优先级，一共有10个级别。优先级只能保证级别高的优先被调度到，但不能保证一定会被调度到。</p>
+<p>两个好基友一起在蹲坑，只有一卷手纸，一个人去取时另一个就不能同时去取，这叫基于共享内存的线程间通信。两个人都是烟鬼，但只带了一个打火机，一个人用完之后递给另外一个人，</p>
+<p>进程和线程的区别：一个办公区有多个卫生间，每个卫生间的资源是独立的，不会相互依赖，相当于是进程。每个卫生间有多个蹲位，每个蹲位相当于是一个线程，蹲位越多并发处理能力越强。但多个同一个卫生间的多个蹲位共用一个洗手台，如果蹲位过多，洗手台的资源会成为瓶颈。</p>
+<p>原文：<a href="https://my.oschina.net/leejun2005/blog/483999" target="_blank" rel="noopener">https://my.oschina.net/leejun2005/blog/483999</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="huyuxin Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/13/view-scroll/" rel="next" title="Android分析View的scrollBy()和scrollTo()的参数正负问题原理分析">
+                <i class="fa fa-chevron-left"></i> Android分析View的scrollBy()和scrollTo()的参数正负问题原理分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/21/dep-inj/" rel="prev" title="深度理解依赖注入（Dependence Injection）">
+                深度理解依赖注入（Dependence Injection） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">huyuxin</p>
+              <p class="site-description motion-element" itemprop="description">打渔还是晒网,这是一个问题</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/huyuxin95" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:domehuyuxin@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、区别："><span class="nav-number">1.</span> <span class="nav-text">1、区别：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、联系："><span class="nav-number">2.</span> <span class="nav-text">2、联系：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、资源共享带来的问题：多线程的线程安全问题"><span class="nav-number">3.</span> <span class="nav-text">3、资源共享带来的问题：多线程的线程安全问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、附：白话并发"><span class="nav-number">4.</span> <span class="nav-text">4、附：白话并发</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">huyuxin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
