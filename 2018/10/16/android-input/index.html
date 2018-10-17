@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2018/10/16/android-input/key_event.jpg">
 <meta property="og:image" content="http://yoursite.com/2018/10/16/android-input/touch_event.png">
-<meta property="og:updated_time" content="2018-10-17T15:11:21.302Z">
+<meta property="og:updated_time" content="2018-10-17T15:14:02.052Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)输入系统与事件分发机制">
 <meta name="twitter:description" content="输入设备通过硬件驱动向设备节点文件 /dev/input 中写入原始事件KeyLinux在EventHub中通过epoll和inotify机制,监听设备节点文件的输入事件之后在InputReaderThread线程中通过InputReader读取输入事件,并将其交由InputDispatcherThread线程的InputDispatcher在InputDispatcher中,InputDispa">
@@ -307,12 +307,9 @@
 <p>在ActivityThread中,Activity执行完onResume之后将当前Activity的PhoneWindow的DecorView信息添加到WindowManagerService中<br><br>在添加过程中持有DecorView的ViewRootimpl的setView方法中创建与InputDispatcher通信的Socket的客户端的文件描述符<br>并通过WindowManagerService添加到InputManagerService中去<br></p>
 <p>在ViewRootImpl中创建的Socket通信的客户端引用被内部类WindowInputEventReceiver所持有,当Native层捕获事件后<br><br>InputDispatcherThread的InputDispatcher通过Socket发送至UI线程的android_view_InputEventReceiver.cpp然后通过JNI传递至WindowInputEventReceiver的父类InputEventReceiver中,之后就开始了Java层的分发,</p>
 <p>在Android系统中输入事件的用户消息主要分为三类,按键消息(KeyEvent),触摸消息(MoutionEvent),轨迹球消息(Trackball),其中轨迹球消息逐渐被废弃,不做讨论.</p>
-<p>##按键消息(KeyEvent):</p>
-<p>在ViewPostImeInputStage#onProcess 根据消息类型instanceof KeyEvent 来判断当前是否是按键消息<br><br>在processKeyEvent中 如果是则传递到processKeyEvent,<br><br>在ViewRootImpl里,传递给与当前ViewRootImpl关联的DecorView的dispatchKeyEvent<br><br>在DecorView里通过在前注册在PhoneWindow的CallBack传递给Activity的dispatchKeyEvent<br><br>在Activity类dispatchKeyEvent里面再次将事件传递给当前Window的DecorView的superDispatchKeyEvent<br><br><em>(Activity的dispatchKeyEvent中可以拦截当前Activity的输入事件)</em><br><br>在DecorView中将事件传递给其父类ViewGroup的dispatchKeyEvent <br><br>此时便开始了View树的事件派发<br><br>在View的dispatchKeyEvent 中先执行onKey监听如果事件没被消费则走系统默认的消息处理流程,即KeyEvent的dispatch方法<br><br>其中dispatch的第一个参数KeyEvent.CallBack,这个回调在View和Activity中均有实现,当前传入的是View<br><br>在dispatch中先执行View的onKeyDown,然后执行onKeyUp,并在onKeyUp中区分长按事件还是点击事件<br><br>如果遍历完View树事件依旧没有被消费,又回到了Activity的dispatchKeyEvent中,开始了Activity的消息处理<br><br>直接调用KeyEvent的dispatch这时传入的参数是当前Activity<br><br>在dispatch中先执行Activity的onKeyDown,然后执行onKeyUp,并在onKeyUp中区分长按事件还是点击事件<br><br>当按键消息在View树中内部以及Activity内部没有被处理时,再次回到之前调用PhoneWindow的CallBack的地方<br><br>调用PhoneWindow的onKeyDown以及onKeyUP,在这里面处理一些系统按键如音量键,Menu键<br><img src="/2018/10/16/android-input/key_event.jpg" alt=""></p>
-<p>##触摸消息(MoutionEvent):</p>
-<p>在ViewPostImeInputStage的onProcess中根据事件来源区分然后将事件传递<br><br>给PhoneWindow中的DecorView的dispatchPointerEvent方法<em>(DecorView没有重写该方法,实际在View里)</em><br><br>接着调用DecorView里面的dispatchTouchEvent在之后就是将事件通过Window.Callback传递给Activity的dispatchTouchEvent<br><br>在Activity的dispatchTouchEvent里面再次事件传递回DecorView,接着就开始了正式的View树的事件分发从DecorView的<br><br>父类ViewGroup开始dispatchTouchEvent<br><br>在ViewGroup的dispatchTouchEvent中先执行onInterceptTouchEvent确定是否需要继续向下传递<br><br>然后开始计算触摸事件消息位置是否包含了该child如果是,当前View是否还是ViewGroup如果是<br>则继续执行ViewGroup的dispatchTouchEvent以及onInterceptTouchEvent,<br><br>在找到目标View之后,调用目标View的dispatchTouchEvent,然后是目标View的onTouchEvent<br><br>在onTouchEvent中执行View的长按判断以及点击事件<br><br>如果没有retuan true那么在ViewGroup的dispatchTouchEvent开始执行ViewGroup的onTouchEvent<br><br>ViewGroup里面的onTouchEvent其实调用的就是View里面的<br><br>当所有的ViewGroup的onTouchEvent中都没消费事件<br>回到Activity的dispatchTouchEvent并调用Activity的onTouchEvent<br><img src="/2018/10/16/android-input/touch_event.png" alt=""></p>
-<p>##触摸消息分发与按键消息派发区别</p>
-<ul>
+<h2 id="按键消息-KeyEvent"><a href="#按键消息-KeyEvent" class="headerlink" title="按键消息(KeyEvent):"></a>按键消息(KeyEvent):</h2><p>在ViewPostImeInputStage#onProcess 根据消息类型instanceof KeyEvent 来判断当前是否是按键消息<br><br>在processKeyEvent中 如果是则传递到processKeyEvent,<br><br>在ViewRootImpl里,传递给与当前ViewRootImpl关联的DecorView的dispatchKeyEvent<br><br>在DecorView里通过在前注册在PhoneWindow的CallBack传递给Activity的dispatchKeyEvent<br><br>在Activity类dispatchKeyEvent里面再次将事件传递给当前Window的DecorView的superDispatchKeyEvent<br><br><em>(Activity的dispatchKeyEvent中可以拦截当前Activity的输入事件)</em><br><br>在DecorView中将事件传递给其父类ViewGroup的dispatchKeyEvent <br><br>此时便开始了View树的事件派发<br><br>在View的dispatchKeyEvent 中先执行onKey监听如果事件没被消费则走系统默认的消息处理流程,即KeyEvent的dispatch方法<br><br>其中dispatch的第一个参数KeyEvent.CallBack,这个回调在View和Activity中均有实现,当前传入的是View<br><br>在dispatch中先执行View的onKeyDown,然后执行onKeyUp,并在onKeyUp中区分长按事件还是点击事件<br><br>如果遍历完View树事件依旧没有被消费,又回到了Activity的dispatchKeyEvent中,开始了Activity的消息处理<br><br>直接调用KeyEvent的dispatch这时传入的参数是当前Activity<br><br>在dispatch中先执行Activity的onKeyDown,然后执行onKeyUp,并在onKeyUp中区分长按事件还是点击事件<br><br>当按键消息在View树中内部以及Activity内部没有被处理时,再次回到之前调用PhoneWindow的CallBack的地方<br><br>调用PhoneWindow的onKeyDown以及onKeyUP,在这里面处理一些系统按键如音量键,Menu键<br><img src="/2018/10/16/android-input/key_event.jpg" alt=""></p>
+<h2 id="触摸消息-MoutionEvent"><a href="#触摸消息-MoutionEvent" class="headerlink" title="触摸消息(MoutionEvent):"></a>触摸消息(MoutionEvent):</h2><p>在ViewPostImeInputStage的onProcess中根据事件来源区分然后将事件传递<br><br>给PhoneWindow中的DecorView的dispatchPointerEvent方法<em>(DecorView没有重写该方法,实际在View里)</em><br><br>接着调用DecorView里面的dispatchTouchEvent在之后就是将事件通过Window.Callback传递给Activity的dispatchTouchEvent<br><br>在Activity的dispatchTouchEvent里面再次事件传递回DecorView,接着就开始了正式的View树的事件分发从DecorView的<br><br>父类ViewGroup开始dispatchTouchEvent<br><br>在ViewGroup的dispatchTouchEvent中先执行onInterceptTouchEvent确定是否需要继续向下传递<br><br>然后开始计算触摸事件消息位置是否包含了该child如果是,当前View是否还是ViewGroup如果是<br>则继续执行ViewGroup的dispatchTouchEvent以及onInterceptTouchEvent,<br><br>在找到目标View之后,调用目标View的dispatchTouchEvent,然后是目标View的onTouchEvent<br><br>在onTouchEvent中执行View的长按判断以及点击事件<br><br>如果没有retuan true那么在ViewGroup的dispatchTouchEvent开始执行ViewGroup的onTouchEvent<br><br>ViewGroup里面的onTouchEvent其实调用的就是View里面的<br><br>当所有的ViewGroup的onTouchEvent中都没消费事件<br>回到Activity的dispatchTouchEvent并调用Activity的onTouchEvent<br><img src="/2018/10/16/android-input/touch_event.png" alt=""></p>
+<h2 id="触摸消息分发与按键消息派发区别"><a href="#触摸消息分发与按键消息派发区别" class="headerlink" title="触摸消息分发与按键消息派发区别"></a>触摸消息分发与按键消息派发区别</h2><ul>
 <li>1.触摸消息在处理时,需要根据触摸坐标计算该消息位置是否包含了当前View而决定是否需要分发下去而按键消息则是根据当前View或则子View是否有焦点而决定是否需要分发下去</li>
 <li>2.触摸消息没有类似“系统按键”,“系统组合键”等预设消息需要处理</li>
 </ul>
@@ -430,8 +427,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -502,6 +508,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#按键消息-KeyEvent"><span class="nav-number">1.</span> <span class="nav-text">按键消息(KeyEvent):</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#触摸消息-MoutionEvent"><span class="nav-number">2.</span> <span class="nav-text">触摸消息(MoutionEvent):</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#触摸消息分发与按键消息派发区别"><span class="nav-number">3.</span> <span class="nav-text">触摸消息分发与按键消息派发区别</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

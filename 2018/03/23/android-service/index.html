@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="##概述:和Activity一样,Service同样继承至Context,是Android的四大组件之一,但是和Activity不一样的是Service的使用场景,Service使用于后台运行代码,而不现实界面,一般用于执行耗时较长的操作,当然Service默认运行在主线程,需要执行耗时操作需要在Service中创建一个新的线程. ###生命周期说明:  onCreate(): 首次创建服务时，系">
+<meta name="description" content="##概述:和Activity一样,Service同样继承至Context,是Android的四大组件之一,但是和Activity不一样的是Service的使用场景,Service使用于后台运行代码,而不现实界面,一般用于执行耗时较长的操作,当然Service默认运行在主线程,需要执行耗时操作需要在Service中创建一个新的线程. ###生命周期说明: onCreate(): 首次创建服务时，系统">
 <meta name="keywords" content="Android基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(Android基础)什么是Service">
 <meta property="og:url" content="http://yoursite.com/2018/03/23/android-service/index.html">
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
-<meta property="og:description" content="##概述:和Activity一样,Service同样继承至Context,是Android的四大组件之一,但是和Activity不一样的是Service的使用场景,Service使用于后台运行代码,而不现实界面,一般用于执行耗时较长的操作,当然Service默认运行在主线程,需要执行耗时操作需要在Service中创建一个新的线程. ###生命周期说明:  onCreate(): 首次创建服务时，系">
+<meta property="og:description" content="##概述:和Activity一样,Service同样继承至Context,是Android的四大组件之一,但是和Activity不一样的是Service的使用场景,Service使用于后台运行代码,而不现实界面,一般用于执行耗时较长的操作,当然Service默认运行在主线程,需要执行耗时操作需要在Service中创建一个新的线程. ###生命周期说明: onCreate(): 首次创建服务时，系统">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2018/03/23/android-service/service_lifecycle.png">
-<meta property="og:updated_time" content="2018-10-13T05:05:35.461Z">
+<meta property="og:updated_time" content="2018-10-17T15:17:40.289Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)什么是Service">
-<meta name="twitter:description" content="##概述:和Activity一样,Service同样继承至Context,是Android的四大组件之一,但是和Activity不一样的是Service的使用场景,Service使用于后台运行代码,而不现实界面,一般用于执行耗时较长的操作,当然Service默认运行在主线程,需要执行耗时操作需要在Service中创建一个新的线程. ###生命周期说明:  onCreate(): 首次创建服务时，系">
+<meta name="twitter:description" content="##概述:和Activity一样,Service同样继承至Context,是Android的四大组件之一,但是和Activity不一样的是Service的使用场景,Service使用于后台运行代码,而不现实界面,一般用于执行耗时较长的操作,当然Service默认运行在主线程,需要执行耗时操作需要在Service中创建一个新的线程. ###生命周期说明: onCreate(): 首次创建服务时，系统">
 <meta name="twitter:image" content="http://yoursite.com/2018/03/23/android-service/service_lifecycle.png">
 
 
@@ -302,16 +302,14 @@
       
 
       
-        <p>##概述:<br>和Activity一样,Service同样继承至Context,是Android的四大组件之一,但是和Activity不一样的是Service的使用场景,Service使用于后台运行代码,而不现实界面,一般用于执行耗时较长的操作,当然Service默认运行在主线程,需要执行耗时操作需要在Service中创建一个新的线程.<br><img src="/2018/03/23/android-service/service_lifecycle.png" alt="图片加载失败"></p>
-<p>###生命周期说明:</p>
-<ul>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="##概述:"></a>##概述:</h2><p>和Activity一样,Service同样继承至Context,是Android的四大组件之一,但是和Activity不一样的是Service的使用场景,Service使用于后台运行代码,而不现实界面,一般用于执行耗时较长的操作,当然Service默认运行在主线程,需要执行耗时操作需要在Service中创建一个新的线程.<br><img src="/2018/03/23/android-service/service_lifecycle.png" alt="图片加载失败"></p>
+<h2 id="生命周期说明"><a href="#生命周期说明" class="headerlink" title="###生命周期说明:"></a>###生命周期说明:</h2><ul>
 <li>onCreate():<br> 首次创建服务时，系统将调用此方法来执行一次性设置程序（在调用 onStartCommand() 或onBind() 之前）。如果服务已在运行，则不会调用此方法，该方法只调用一次</li>
 <li>onStartCommand()<br>  当另一个组件（如 Activity）通过调用 startService() 请求启动服务时，系统将调用此方法。一旦执行此方法，服务即会启动并可在后台无限期运行。 如果自己实现此方法，则需要在服务工作完成后，通过调用 stopSelf() 或 stopService() 来停止服务。（在绑定状态下，无需实现此方法。）</li>
 <li>onBind():<br>  当另一个组件想通过调用 bindService() 与服务绑定（例如执行 RPC）时，系统将调用此方法。在此方法的实现中，必须返回 一个IBinder 接口的实现类，供客户端用来与服务进行通信。无论是启动状态还是绑定状态，此方法必须重写，但在启动状态的情况下直接返回 null。</li>
 <li>onDestroy():<br>  当服务不再使用且将被销毁时，系统将调用此方法。服务应该实现此方法来清理所有资源，如线程、注册的侦听器、接收器等，这是服务接收的最后一个调用。</li>
 </ul>
-<p>###Service的Framework流程</p>
-<ul>
+<h2 id="Service的Framework流程"><a href="#Service的Framework流程" class="headerlink" title="###Service的Framework流程"></a>###Service的Framework流程</h2><ul>
 <li>startService():<br>当调用ContextImpl里面的startService时,会通过远程调用调用Ams的startService方法,Ams中调用ActiveServices来管理Service的启动,调用startServiceLocked,在ActiveService中根据传入的启动Service的intent和其他的进程信息查询或创建ServiceRecord实例,如果需要启动的Service已经启动过了,那么再次回调Service的onStartCommand(),如果需要启动的Service所在的进程还未启动则先创建对应的进程,如果所在的进程已经创建了那么远程调用客户端的scheduleCreateService,从而执行Service的attach和onCreate()方法,接着Ams通知ApplicationThread发送消息执行Service的onStartCommand(),<br>当主动调用stopService或则内存不够或则应用退出时,Ams会远程调用Service的onDestory方法.</li>
 </ul>
 <ul>
@@ -435,8 +433,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -507,6 +514,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">##概述:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生命周期说明"><span class="nav-number">2.</span> <span class="nav-text">###生命周期说明:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service的Framework流程"><span class="nav-number">3.</span> <span class="nav-text">###Service的Framework流程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

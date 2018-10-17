@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
 <meta property="og:description" content="DecorView类 : Window的界面,是一个FrameLayout,其中包含窗口的装饰以及窗口内容,窗口的装饰根据开发者配置创建,窗口的内容则是id=content的FrameLayout,其内容通过开发者主动调用Activity的setContentView来填充 ViewRootImpl 类: ViewRootImpl不是一个View,但是它持有需要和WimdowManagerServ">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-13T06:17:02.292Z">
+<meta property="og:updated_time" content="2018-10-17T15:15:37.094Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)窗口的创建过程">
 <meta name="twitter:description" content="DecorView类 : Window的界面,是一个FrameLayout,其中包含窗口的装饰以及窗口内容,窗口的装饰根据开发者配置创建,窗口的内容则是id=content的FrameLayout,其内容通过开发者主动调用Activity的setContentView来填充 ViewRootImpl 类: ViewRootImpl不是一个View,但是它持有需要和WimdowManagerServ">
@@ -309,7 +309,7 @@
 <p><strong>Session 类:</strong></p>
 <p>窗口的会话对象,通常来说每一个应用程序进程都会持有一个Session对象,以便和Wms交互,Session的创建通过WMS的OpenSession()</p>
 <p>窗口类型主要分三类<br>应用窗口<br>子窗口<br>系统窗口</p>
-<p>##创建应用窗口流程<br>应用窗口的创建从Activity的启动开始,在Activity的attach中,为</p>
+<h2 id="创建应用窗口流程"><a href="#创建应用窗口流程" class="headerlink" title="##创建应用窗口流程"></a>##创建应用窗口流程</h2><p>应用窗口的创建从Activity的启动开始,在Activity的attach中,为</p>
 <ol>
 <li>当前的Activity创建Window对象(实现类为PhoneWIndow),将Activity的对象设置为Window的Callbcak对象,<br>并为当前的Window对象设置WIndowManager(WindowManager的实现类是WIndowManagerImpl,同时持有Disaply和WImdowManagerGlobal的引用)</li>
 <li>接着在Activity的生命周期onCreate中,通过调用Activity的方法setContentView为当前的Activity设置显示元素,然后在里面调用Activity所持有的PhoneWindow的setContentVIew方法</li>
@@ -434,8 +434,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -506,6 +515,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建应用窗口流程"><span class="nav-number">1.</span> <span class="nav-text">##创建应用窗口流程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

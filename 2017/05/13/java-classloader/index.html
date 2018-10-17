@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="##什么是类加载器 Java虚拟机类加载过程是把Class类文件加载到内存，并对Class文件中的数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的java类型的过程。 在Java中，任意一个类都需要由加载它的类加载器和这个类本身一同确定其在java虚拟机中的唯一性，即比较两个类是否相等，只有在这两个类是由同一个类加载器加载的前提之下才有意义，否则，即使这两个类来源于同一个Class类">
+<meta name="description" content="##什么是类加载器Java虚拟机类加载过程是把Class类文件加载到内存，并对Class文件中的数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的java类型的过程。 在Java中，任意一个类都需要由加载它的类加载器和这个类本身一同确定其在java虚拟机中的唯一性，即比较两个类是否相等，只有在这两个类是由同一个类加载器加载的前提之下才有意义，否则，即使这两个类来源于同一个Class类文">
 <meta name="keywords" content="Android基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="类装载器与双亲委派机制">
 <meta property="og:url" content="http://yoursite.com/2017/05/13/java-classloader/index.html">
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
-<meta property="og:description" content="##什么是类加载器 Java虚拟机类加载过程是把Class类文件加载到内存，并对Class文件中的数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的java类型的过程。 在Java中，任意一个类都需要由加载它的类加载器和这个类本身一同确定其在java虚拟机中的唯一性，即比较两个类是否相等，只有在这两个类是由同一个类加载器加载的前提之下才有意义，否则，即使这两个类来源于同一个Class类">
+<meta property="og:description" content="##什么是类加载器Java虚拟机类加载过程是把Class类文件加载到内存，并对Class文件中的数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的java类型的过程。 在Java中，任意一个类都需要由加载它的类加载器和这个类本身一同确定其在java虚拟机中的唯一性，即比较两个类是否相等，只有在这两个类是由同一个类加载器加载的前提之下才有意义，否则，即使这两个类来源于同一个Class类文">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2017/05/13/java-classloader/img.png">
-<meta property="og:updated_time" content="2018-10-13T07:10:10.850Z">
+<meta property="og:updated_time" content="2018-10-17T15:16:46.892Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="类装载器与双亲委派机制">
-<meta name="twitter:description" content="##什么是类加载器 Java虚拟机类加载过程是把Class类文件加载到内存，并对Class文件中的数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的java类型的过程。 在Java中，任意一个类都需要由加载它的类加载器和这个类本身一同确定其在java虚拟机中的唯一性，即比较两个类是否相等，只有在这两个类是由同一个类加载器加载的前提之下才有意义，否则，即使这两个类来源于同一个Class类">
+<meta name="twitter:description" content="##什么是类加载器Java虚拟机类加载过程是把Class类文件加载到内存，并对Class文件中的数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的java类型的过程。 在Java中，任意一个类都需要由加载它的类加载器和这个类本身一同确定其在java虚拟机中的唯一性，即比较两个类是否相等，只有在这两个类是由同一个类加载器加载的前提之下才有意义，否则，即使这两个类来源于同一个Class类文">
 <meta name="twitter:image" content="http://yoursite.com/2017/05/13/java-classloader/img.png">
 
 
@@ -302,20 +302,16 @@
       
 
       
-        <p>##什么是类加载器</p>
-<p>Java虚拟机类加载过程是把Class类文件加载到内存，并对Class文件中的数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的java类型的过程。</p>
+        <h2 id="什么是类加载器"><a href="#什么是类加载器" class="headerlink" title="##什么是类加载器"></a>##什么是类加载器</h2><p>Java虚拟机类加载过程是把Class类文件加载到内存，并对Class文件中的数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的java类型的过程。</p>
 <p>在Java中，任意一个类都需要由加载它的类加载器和这个类本身一同确定其在java虚拟机中的唯一性，即比较两个类是否相等，只有在这两个类是由同一个类加载器加载的前提之下才有意义，否则，即使这两个类来源于同一个Class类文件，只要加载它的类加载器不相同，那么这两个类必定不相等(这里的相等包括代表类的Class对象的equals()方法、isAssignableFrom()方法、isInstance()方法和instanceof关键字的结果)。</p>
-<p>##java虚拟机加载器的种类</p>
-<ul>
+<h2 id="java虚拟机加载器的种类"><a href="#java虚拟机加载器的种类" class="headerlink" title="##java虚拟机加载器的种类"></a>##java虚拟机加载器的种类</h2><ul>
 <li>BootstrapClassLoader（启动类加载器）是Java虚拟机的一部分，用来加载JAVA_Home/lib目录下的类库</li>
 <li>ExtensionClassLoader（标准扩展类加载器）用来加载JAVA_Home/lib/ext目录下的类库</li>
 <li>ApplicationClassLoader（系统类加载器）将系统类路径（CLASS_PATH）中的类库加载到内存中去</li>
 <li>除此之外还有自定义类加载器，他们之间的除了顶层的BootStrapClassLoder，其他加载器都应该指明他的父加载器，父加载器和其应该是一种组合关系。<br><img src="/2017/05/13/java-classloader/img.png" alt=""></li>
 </ul>
-<p>##双亲委派模型</p>
-<p>指某一个加载器在接收到加载类的请求时，首先将加载任务委托给父加载器，依次递归，如果父加载器能够加载则直接返回，只有父加载器都无法加载的情况下才由自己加载。这样做的目的在于防止类加载再次将一个已经存在的Class加载进去。</p>
-<p>##Android中的类加载器</p>
-<ul>
+<h2 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="##双亲委派模型"></a>##双亲委派模型</h2><p>指某一个加载器在接收到加载类的请求时，首先将加载任务委托给父加载器，依次递归，如果父加载器能够加载则直接返回，只有父加载器都无法加载的情况下才由自己加载。这样做的目的在于防止类加载再次将一个已经存在的Class加载进去。</p>
+<h2 id="Android中的类加载器"><a href="#Android中的类加载器" class="headerlink" title="##Android中的类加载器"></a>##Android中的类加载器</h2><ul>
 <li>BootClassLoader：BootClassLoader 的实例在Android启动的时候创建，用来加载Android系统框架类库</li>
 <li>PathClassLoader：在应用启动的时候创建该类加载器实例，只能加载本地的列表文件或目录，在Android中也就是已安装好的APK，它不能加载来自网络的类。</li>
 <li>DexClassLoader：:可以从包含dex文件的JAR或APK中来加载类，可用于动态加载。</li>
@@ -438,8 +434,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -510,6 +515,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是类加载器"><span class="nav-number">1.</span> <span class="nav-text">##什么是类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#java虚拟机加载器的种类"><span class="nav-number">2.</span> <span class="nav-text">##java虚拟机加载器的种类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双亲委派模型"><span class="nav-number">3.</span> <span class="nav-text">##双亲委派模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android中的类加载器"><span class="nav-number">4.</span> <span class="nav-text">##Android中的类加载器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
 <meta property="og:description" content="主要分为三部分:  1.intent的匹配框架 2.权限的检查 3.程序安装,卸载接口的提供   PMS的框架主要分为三层  应用程序层      通过PMS的引用代理向应用程序提供API接口 MS服务层     和AMS WMS一样运行与SystemServer进程中,PMS启动后通过解析相关的XML文件获得全部程序的包信息,除此之外PMS还有两个服务,一个是DefaultContainerSe">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-13T06:09:53.120Z">
+<meta property="og:updated_time" content="2018-10-17T15:15:57.608Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)关于PMS">
 <meta name="twitter:description" content="主要分为三部分:  1.intent的匹配框架 2.权限的检查 3.程序安装,卸载接口的提供   PMS的框架主要分为三层  应用程序层      通过PMS的引用代理向应用程序提供API接口 MS服务层     和AMS WMS一样运行与SystemServer进程中,PMS启动后通过解析相关的XML文件获得全部程序的包信息,除此之外PMS还有两个服务,一个是DefaultContainerSe">
@@ -312,7 +312,7 @@
 <li>MS服务层     和AMS WMS一样运行与SystemServer进程中,PMS启动后通过解析相关的XML文件获得全部程序的包信息,除此之外PMS还有两个服务,一个是DefaultContainerService 主要负责把安装程序复制到程序目录,还有一个Installer服务,Installer服务主要完成程序的解压与数据目录的创建,Installer其实是Socket的客户端,其提供的所有API都会通过Socket将参数发送至 Socket的服务端(installd守护进程)</li>
 <li>数据文件层     主要本地的程序文件,framework库文件,以及应用程序的数据文件</li>
 </ol>
-<p>##PMS包含的重要变量<br>mPackages 保存所有通过扫描指定目录得到的包信息</p>
+<h2 id="PMS包含的重要变量"><a href="#PMS包含的重要变量" class="headerlink" title="##PMS包含的重要变量"></a>##PMS包含的重要变量</h2><p>mPackages 保存所有通过扫描指定目录得到的包信息</p>
 <p>mSettings    包含基本上包管理所需的全部信息</p>
 <p>mShareLibraries 系统所依赖的共享Java库</p>
 <p>mActivities mReceivers mServices mProviders 保存所有应用的四大组件信息</p>
@@ -441,8 +441,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -513,6 +522,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PMS包含的重要变量"><span class="nav-number">1.</span> <span class="nav-text">##PMS包含的重要变量</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

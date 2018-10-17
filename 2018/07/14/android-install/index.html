@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
 <meta property="og:description" content="##应用程序的安装应用程序通过PackageManager提供的installPackage()方法安装程序,请求会发送至PMS的installPackage(). 在PMS的installPackage中先通过handle发送一个INIT_COPY的异步信息并携带HandleParams的实现类InstallParams的对象(InstallParams标志着这是一个全新的安装,HandlePa">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-13T06:13:29.483Z">
+<meta property="og:updated_time" content="2018-10-17T15:15:48.310Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)应用程序的安装与卸载">
 <meta name="twitter:description" content="##应用程序的安装应用程序通过PackageManager提供的installPackage()方法安装程序,请求会发送至PMS的installPackage(). 在PMS的installPackage中先通过handle发送一个INIT_COPY的异步信息并携带HandleParams的实现类InstallParams的对象(InstallParams标志着这是一个全新的安装,HandlePa">
@@ -300,11 +300,11 @@
       
 
       
-        <p>##应用程序的安装<br>应用程序通过PackageManager提供的installPackage()方法安装程序,请求会发送至PMS的installPackage().</p>
+        <h2 id="应用程序的安装"><a href="#应用程序的安装" class="headerlink" title="##应用程序的安装"></a>##应用程序的安装</h2><p>应用程序通过PackageManager提供的installPackage()方法安装程序,请求会发送至PMS的installPackage().</p>
 <p>在PMS的installPackage中先通过handle发送一个INIT_COPY的异步信息并携带HandleParams的实现类InstallParams的对象<br><em>(InstallParams标志着这是一个全新的安装,HandleParams还有一个子类MoveParams,这是一个对已安装应用进行拷贝的实现类)</em></p>
 <p>异步消息处理线程接受到信息后,先确认DefaultMediaService是否已经绑定成功,然后向DefaultMediaService确认是否可以安装,以及获得可安装的位置<br>然后根据返回的安装位置开始拷贝安装包到对应的路径.<br><em>(tips:第三方应用为/data/app)</em>,</p>
 <p>拷贝完成后,PMS下监听文件目录下文件变化的监听者(AppDirObserver),开始调用scanPackageLI解析新增的应用程序</p>
-<p>##应用程序的卸载<br>应用程序通过PackageManager提供的deletePackage方法卸载程序,卸载步骤和安装步骤相反,</p>
+<h2 id="应用程序的卸载"><a href="#应用程序的卸载" class="headerlink" title="##应用程序的卸载"></a>##应用程序的卸载</h2><p>应用程序通过PackageManager提供的deletePackage方法卸载程序,卸载步骤和安装步骤相反,</p>
 <p>先是删除mPackages里面的包信息,以及全局变量<br>mActivities,mServices,mProvider,mReceivers保存的组件信息<br>然后调用Installer删除私有目录/data/data下的目录文件<br>然后bindService通过DefaultContainerService清除外部存储区数据<br>然后清空mSettings里面的相关数据,并将清除后的mSettings重新写入</p>
 
       
@@ -424,8 +424,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -496,6 +505,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#应用程序的安装"><span class="nav-number">1.</span> <span class="nav-text">##应用程序的安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用程序的卸载"><span class="nav-number">2.</span> <span class="nav-text">##应用程序的卸载</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

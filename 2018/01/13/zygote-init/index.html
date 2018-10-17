@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2018/01/13/zygote-init/zygote_init_one.png">
 <meta property="og:image" content="http://yoursite.com/2018/01/13/zygote-init/zygote_init_two.png">
-<meta property="og:updated_time" content="2018-10-13T04:59:49.061Z">
+<meta property="og:updated_time" content="2018-10-17T15:18:15.463Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)Zygote进程的启动流程">
 <meta name="twitter:description" content="##概述：init进程通过启动app_process进程并创建Java虚拟机后，使用JNI调用由Java编写的Zygote代码。Zygote进程通过已加载的Java虚拟机从而可以运行Android应用、Zygote进程通过fork()创建子进程，避免了子进程的重复初始化虚拟机以及加载Framework类库和资源的操作。 1.init进程启动完系统运行所需的各种Deamon后，启动Zygote进程。">
@@ -303,7 +303,7 @@
       
 
       
-        <p>##概述：<br>init进程通过启动app_process进程并创建Java虚拟机后，使用JNI调用由Java编写的Zygote代码。<br>Zygote进程通过已加载的Java虚拟机从而可以运行Android应用、Zygote进程通过fork()创建子进程，避免了子进程的重复初始化虚拟机以及加载Framework类库和资源的操作。</p>
+        <h2 id="概述："><a href="#概述：" class="headerlink" title="##概述："></a>##概述：</h2><p>init进程通过启动app_process进程并创建Java虚拟机后，使用JNI调用由Java编写的Zygote代码。<br>Zygote进程通过已加载的Java虚拟机从而可以运行Android应用、Zygote进程通过fork()创建子进程，避免了子进程的重复初始化虚拟机以及加载Framework类库和资源的操作。</p>
 <p>1.init进程启动完系统运行所需的各种Deamon后，启动Zygote进程。Zygote启动完成之后，Android的服务与应用程序都由Zygote进程启动运行<em>（tips：Android系统中运行的进程主要分为三类：内核进程，由init进程启动的Deamon进程，由Zygote启动的Android的服务和应用程序）</em></p>
 <p>2.Linux系统中创建并运行一个进程，与在Android系统中通过Zygote来创建并运行一个进程的区别</p>
 <p>在Linux系统中：</p>
@@ -445,8 +445,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -517,6 +526,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述："><span class="nav-number">1.</span> <span class="nav-text">##概述：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

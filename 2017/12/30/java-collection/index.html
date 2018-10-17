@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
 <meta property="og:description" content="线性表，链表，哈希表是常用的数据结构，在进行Java开发时，JDK已经为我们提供了一系列相应的类来实现基本的数据结构。这些类均在java.util包中。本文试图通过简单的描述，向读者阐述各个类的作用以及如何正确使用这些类。 1234567891011Collection├List│├LinkedList│├ArrayList│└Vector│　└Stack└SetMap├Hashtable├Has">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-13T07:15:35.472Z">
+<meta property="og:updated_time" content="2018-10-17T15:15:21.343Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(转)Java 中 Vector、ArrayList、List 使用">
 <meta name="twitter:description" content="线性表，链表，哈希表是常用的数据结构，在进行Java开发时，JDK已经为我们提供了一系列相应的类来实现基本的数据结构。这些类均在java.util包中。本文试图通过简单的描述，向读者阐述各个类的作用以及如何正确使用这些类。 1234567891011Collection├List│├LinkedList│├ArrayList│└Vector│　└Stack└SetMap├Hashtable├Has">
@@ -302,10 +302,8 @@
       
         <p>线性表，链表，哈希表是常用的数据结构，在进行Java开发时，JDK已经为我们提供了一系列相应的类来实现基本的数据结构。这些类均在java.util包中。本文试图通过简单的描述，向读者阐述各个类的作用以及如何正确使用这些类。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Collection</span><br><span class="line">├List</span><br><span class="line">│├LinkedList</span><br><span class="line">│├ArrayList</span><br><span class="line">│└Vector</span><br><span class="line">│　└Stack</span><br><span class="line">└Set</span><br><span class="line">Map</span><br><span class="line">├Hashtable</span><br><span class="line">├HashMap</span><br><span class="line">└WeakHashMap</span><br></pre></td></tr></table></figure>
-<p>##Collection接口</p>
-<p>Collection是最基本的集合接口，一个Collection代表一组Object，即Collection的元素（Elements）。一些 Collection允许相同的元素而另一些不行。一些能排序而另一些不行。Java SDK不提供直接继承自Collection的类， Java SDK提供的类都是继承自Collection的“子接口”如List和Set。 　　所有实现Collection接口的类都必须提供两个标准的构造函数：无参数的构造函数用于创建一个空的Collection，有一个Collection参数的构造函数用于创建一个新的 Collection，这个新的Collection与传入的Collection有相同的元素。后一个构造函数允许用户复制一个Collection。 　　如何遍历Collection中的每一个元素？不论Collection的实际类型如何，它都支持一个iterator()的方法，该方法返回一个迭代子，使用该迭代子即可逐一访问Collection中每一个元素。典型的用法如下： 　　　　Iterator it = collection.iterator(); // 获得一个迭代子 　　　　while(it.hasNext()) { 　　　　　　Object obj = it.next(); // 得到下一个元素 　　　　} 　　由Collection接口派生的两个接口是List和Set。</p>
-<p>###List接口</p>
-<p>List是有序的Collection，使用此接口能够精确的控制每个元素插入的位置。用户能够使用索引（元素在List中的位置，类似于数组下标）来访问List中的元素，这类似于Java的数组。 和下面要提到的Set不同，List允许有相同的元素。 　　除了具有Collection接口必备的iterator()方法外，List还提供一个listIterator()方法，返回一个 ListIterator接口，和标准的Iterator接口相比，ListIterator多了一些add()之类的方法，允许添加，删除，设定元素，还能向前或向后遍历。 　　实现List接口的常用类有LinkedList，ArrayList，Vector和Stack。</p>
+<h2 id="Collection接口"><a href="#Collection接口" class="headerlink" title="##Collection接口"></a>##Collection接口</h2><p>Collection是最基本的集合接口，一个Collection代表一组Object，即Collection的元素（Elements）。一些 Collection允许相同的元素而另一些不行。一些能排序而另一些不行。Java SDK不提供直接继承自Collection的类， Java SDK提供的类都是继承自Collection的“子接口”如List和Set。 　　所有实现Collection接口的类都必须提供两个标准的构造函数：无参数的构造函数用于创建一个空的Collection，有一个Collection参数的构造函数用于创建一个新的 Collection，这个新的Collection与传入的Collection有相同的元素。后一个构造函数允许用户复制一个Collection。 　　如何遍历Collection中的每一个元素？不论Collection的实际类型如何，它都支持一个iterator()的方法，该方法返回一个迭代子，使用该迭代子即可逐一访问Collection中每一个元素。典型的用法如下： 　　　　Iterator it = collection.iterator(); // 获得一个迭代子 　　　　while(it.hasNext()) { 　　　　　　Object obj = it.next(); // 得到下一个元素 　　　　} 　　由Collection接口派生的两个接口是List和Set。</p>
+<h2 id="List接口"><a href="#List接口" class="headerlink" title="###List接口"></a>###List接口</h2><p>List是有序的Collection，使用此接口能够精确的控制每个元素插入的位置。用户能够使用索引（元素在List中的位置，类似于数组下标）来访问List中的元素，这类似于Java的数组。 和下面要提到的Set不同，List允许有相同的元素。 　　除了具有Collection接口必备的iterator()方法外，List还提供一个listIterator()方法，返回一个 ListIterator接口，和标准的Iterator接口相比，ListIterator多了一些add()之类的方法，允许添加，删除，设定元素，还能向前或向后遍历。 　　实现List接口的常用类有LinkedList，ArrayList，Vector和Stack。</p>
 <p><strong>LinkedList类</strong></p>
 <p>LinkedList实现了List接口，允许null元素。此外LinkedList提供额外的get，remove，insert方法在 LinkedList的首部或尾部。这些操作使LinkedList可被用作堆栈（stack），队列（queue）或双向队列（deque）。 　　注意LinkedList没有同步方法。如果多个线程同时访问一个List，则必须自己实现访问同步。一种解决方法是在创建List时构造一个同步的List： 　　　　List list = Collections.synchronizedList(new LinkedList(…));</p>
 <p><strong>ArrayList类</strong></p>
@@ -314,10 +312,8 @@
 <p>Vector非常类似ArrayList，但是Vector是同步的。由Vector创建的Iterator，虽然和ArrayList创建的 Iterator是同一接口，但是，因为Vector是同步的，当一个Iterator被创建而且正在被使用，另一个线程改变了Vector的状态（例如，添加或删除了一些元素），这时调用Iterator的方法时将抛出ConcurrentModificationException，因此必须捕获该异常。</p>
 <p><strong>Stack 类</strong></p>
 <p>Stack继承自Vector，实现一个后进先出的堆栈。Stack提供5个额外的方法使得 Vector得以被当作堆栈使用。基本的push和pop方法，还有peek方法得到栈顶的元素，empty方法测试堆栈是否为空，search方法检测一个元素在堆栈中的位置。Stack刚创建后是空栈。</p>
-<p>###Set接口</p>
-<p>Set是一种不包含重复的元素的Collection，即任意的两个元素e1和e2都有e1.equals(e2)=false，Set最多有一个null元素。 　　很明显，Set的构造函数有一个约束条件，传入的Collection参数不能包含重复的元素。 　　请注意：必须小心操作可变对象（Mutable Object）。如果一个Set中的可变元素改变了自身状态导致Object.equals(Object)=true将导致一些问题。</p>
-<p>###Map接口</p>
-<p>请注意，Map没有继承Collection接口，Map提供key到value的映射。一个Map中不能包含相同的key，每个key只能映射一个 value。Map接口提供3种集合的视图，Map的内容可以被当作一组key集合，一组value集合，或者一组key-value映射。</p>
+<h2 id="Set接口"><a href="#Set接口" class="headerlink" title="###Set接口"></a>###Set接口</h2><p>Set是一种不包含重复的元素的Collection，即任意的两个元素e1和e2都有e1.equals(e2)=false，Set最多有一个null元素。 　　很明显，Set的构造函数有一个约束条件，传入的Collection参数不能包含重复的元素。 　　请注意：必须小心操作可变对象（Mutable Object）。如果一个Set中的可变元素改变了自身状态导致Object.equals(Object)=true将导致一些问题。</p>
+<h2 id="Map接口"><a href="#Map接口" class="headerlink" title="###Map接口"></a>###Map接口</h2><p>请注意，Map没有继承Collection接口，Map提供key到value的映射。一个Map中不能包含相同的key，每个key只能映射一个 value。Map接口提供3种集合的视图，Map的内容可以被当作一组key集合，一组value集合，或者一组key-value映射。</p>
 <p><strong>Hashtable类</strong></p>
 <p>Hashtable继承Map接口，实现一个key-value映射的哈希表。任何非空（non-null）的对象都可作为key或者value。 　　添加数据使用put(key, value)，取出数据使用get(key)，这两个基本操作的时间开销为常数。 Hashtable 通过initial capacity和load factor两个参数调整性能。通常缺省的load factor 0.75较好地实现了时间和空间的均衡。增大load factor可以节省空间但相应的查找时间将增大，这会影响像get和put这样的操作。 使用Hashtable的简单示例如下，将1，2，3放到Hashtable中，他们的key分别是”one”，”two”，”three”：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Hashtable numbers = new Hashtable();</span><br><span class="line">　　　　numbers.put(“one”, new Integer(1));</span><br><span class="line">　　　　numbers.put(“two”, new Integer(2));</span><br><span class="line">　　　　numbers.put(“three”, new Integer(3));</span><br></pre></td></tr></table></figure>
@@ -455,8 +451,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -527,6 +532,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Collection接口"><span class="nav-number">1.</span> <span class="nav-text">##Collection接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List接口"><span class="nav-number">2.</span> <span class="nav-text">###List接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Set接口"><span class="nav-number">3.</span> <span class="nav-text">###Set接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map接口"><span class="nav-number">4.</span> <span class="nav-text">###Map接口</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

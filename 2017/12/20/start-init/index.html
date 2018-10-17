@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="##概述： 在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1">
+<meta name="description" content="##概述：在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1.">
 <meta name="keywords" content="Android基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(Android基础)Init进程的启动流程">
 <meta property="og:url" content="http://yoursite.com/2017/12/20/start-init/index.html">
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
-<meta property="og:description" content="##概述： 在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1">
+<meta property="og:description" content="##概述：在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1.">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2017/12/20/start-init/start_init.png">
-<meta property="og:updated_time" content="2018-10-13T03:56:09.761Z">
+<meta property="og:updated_time" content="2018-10-17T15:18:45.990Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)Init进程的启动流程">
-<meta name="twitter:description" content="##概述： 在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1">
+<meta name="twitter:description" content="##概述：在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。 1.init进程是Android启动后，由于系统内核启动的第一个用户级进程 2.init进程的工作内容  1.">
 <meta name="twitter:image" content="http://yoursite.com/2017/12/20/start-init/start_init.png">
 
 
@@ -302,8 +302,7 @@
       
 
       
-        <p>##概述：</p>
-<p>在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。</p>
+        <h2 id="概述："><a href="#概述：" class="headerlink" title="##概述："></a>##概述：</h2><p>在Linux系统中，所有的进程都由init进程创建并运行。首先Linux内核启动，然后在用户空间启动init进程，然后由于init进程依次启动系统所需的其他进程。init会作为守护进程监视其他进程，如果那个进程死亡，init接收到对应的SIGCHLD信号会释放进程所占有的资源。</p>
 <p>1.init进程是Android启动后，由于系统内核启动的第一个用户级进程<br><img src="/2017/12/20/start-init/start_init.png" alt="图片加载失败"></p>
 <p>2.init进程的工作内容</p>
 <ul>
@@ -437,8 +436,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -509,6 +517,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述："><span class="nav-number">1.</span> <span class="nav-text">##概述：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

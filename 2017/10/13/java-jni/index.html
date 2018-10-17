@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="##1.Java调用C的过程 ①Java先加载Library，使用System.LoadLibrary(“native”),一般放置在静态代码块中使其能在Class初始化的时候既被调用。调用dlopen函数，打开一个so文件并创建一个handle；调用dlsym()函数，查看相应so文件的JNI_OnLoad()函数指针，并执行相应函数。 ②在加载库后会先调用C的JNI_Onload()函数，在这">
+<meta name="description" content="##1.Java调用C的过程①Java先加载Library，使用System.LoadLibrary(“native”),一般放置在静态代码块中使其能在Class初始化的时候既被调用。调用dlopen函数，打开一个so文件并创建一个handle；调用dlsym()函数，查看相应so文件的JNI_OnLoad()函数指针，并执行相应函数。 ②在加载库后会先调用C的JNI_Onload()函数，在这个">
 <meta name="keywords" content="Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JNI调用流程">
 <meta property="og:url" content="http://yoursite.com/2017/10/13/java-jni/index.html">
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
-<meta property="og:description" content="##1.Java调用C的过程 ①Java先加载Library，使用System.LoadLibrary(“native”),一般放置在静态代码块中使其能在Class初始化的时候既被调用。调用dlopen函数，打开一个so文件并创建一个handle；调用dlsym()函数，查看相应so文件的JNI_OnLoad()函数指针，并执行相应函数。 ②在加载库后会先调用C的JNI_Onload()函数，在这">
+<meta property="og:description" content="##1.Java调用C的过程①Java先加载Library，使用System.LoadLibrary(“native”),一般放置在静态代码块中使其能在Class初始化的时候既被调用。调用dlopen函数，打开一个so文件并创建一个handle；调用dlsym()函数，查看相应so文件的JNI_OnLoad()函数指针，并执行相应函数。 ②在加载库后会先调用C的JNI_Onload()函数，在这个">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-13T06:51:52.636Z">
+<meta property="og:updated_time" content="2018-10-17T15:16:54.915Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JNI调用流程">
-<meta name="twitter:description" content="##1.Java调用C的过程 ①Java先加载Library，使用System.LoadLibrary(“native”),一般放置在静态代码块中使其能在Class初始化的时候既被调用。调用dlopen函数，打开一个so文件并创建一个handle；调用dlsym()函数，查看相应so文件的JNI_OnLoad()函数指针，并执行相应函数。 ②在加载库后会先调用C的JNI_Onload()函数，在这">
+<meta name="twitter:description" content="##1.Java调用C的过程①Java先加载Library，使用System.LoadLibrary(“native”),一般放置在静态代码块中使其能在Class初始化的时候既被调用。调用dlopen函数，打开一个so文件并创建一个handle；调用dlsym()函数，查看相应so文件的JNI_OnLoad()函数指针，并执行相应函数。 ②在加载库后会先调用C的JNI_Onload()函数，在这个">
 
 
 
@@ -300,8 +300,7 @@
       
 
       
-        <p>##1.Java调用C的过程</p>
-<p>①Java先加载Library，使用System.LoadLibrary(“native”),一般放置在静态代码块中使其能在Class初始化的时候既被调用。<br>调用dlopen函数，打开一个so文件并创建一个handle；<br>调用dlsym()函数，查看相应so文件的JNI_OnLoad()函数指针，并执行相应函数。</p>
+        <h2 id="1-Java调用C的过程"><a href="#1-Java调用C的过程" class="headerlink" title="##1.Java调用C的过程"></a>##1.Java调用C的过程</h2><p>①Java先加载Library，使用System.LoadLibrary(“native”),一般放置在静态代码块中使其能在Class初始化的时候既被调用。<br>调用dlopen函数，打开一个so文件并创建一个handle；<br>调用dlsym()函数，查看相应so文件的JNI_OnLoad()函数指针，并执行相应函数。</p>
 <p>②在加载库后会先调用C的JNI_Onload()函数，在这个函数里通过<em>Jvm指针获取</em>env，并通过<em>env调用FindClass找到JClass变量，通过</em>env的RegisterNatives建立C与Java之间的函数映射关系。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef struct&#123;</span><br><span class="line">    char* name,//java方法名</span><br><span class="line">    char* signature, //JNI字段描述符</span><br><span class="line">    void *fnPtr  //C函数名</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">JNI_OnLoad(JavaVM *jvm,Void *reservd)&#123;</span><br><span class="line">    (*jvm)-&gt;GEnv(jvm);</span><br><span class="line">    // 通过jvm获取当前java环境变量</span><br><span class="line">    jclazz=（*env）-&gt;FindClass(env,&quot;Native&quot;);</span><br><span class="line">    // 获取调用的java类名</span><br><span class="line">    (*env)-&gt;RegisterNative(env,jclazz,methods,1);</span><br><span class="line">    // 建立C函数与java方法之间的映射关系，其中映射关系在methods这个存储了映射关系的结构体数组中</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -438,8 +437,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -510,6 +518,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Java调用C的过程"><span class="nav-number">1.</span> <span class="nav-text">##1.Java调用C的过程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

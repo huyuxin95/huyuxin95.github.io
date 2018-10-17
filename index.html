@@ -558,8 +558,7 @@ ViewRootImpl
         
           
           Linux 操作系统和驱动程序运行在内核空间，应用程序运行在用户空间，两者不能简单地使用指针传递数据，因为Linux使用的虚拟内存机制，用户空间的数据可能被换出，当内核空间使用用户空间指针时，对应的数据可能不在内存中。
-##Linux内核地址映射模型
-x86 CPU采用了段页式地址映射模型。进程代码
+##Linux内核地址映射模型x86 CPU采用了段页式地址映射模型。进程代码中
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1076,9 +1075,8 @@ ProcessRecord    进程数据类
         
           
           ##概述select/poll/epoll都是IO多路复用机制，可以同时监控多个描述符，当某个描述符就绪(读或写就绪)，则立刻通知相应程序进行读或写操作。本质上select/poll/epoll都是同步I/O，即读写是阻塞的。
-###select
-原型：
-int select (int n, fd_
+###select原型：
+int select (int n, fd_s
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -1460,9 +1458,8 @@ int select (int n, fd_
           
           ##概述广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程.
 广播主要分为两部分,一:广播的注册与发送.二:广播的接收
-###广播的注册与发送
-广播的注册根据其注册形式不同主要分为两种,
-一种是静
+###广播的注册与发送广播的注册根据其注册形式不同主要分为两种,
+一种是静态
           ...
           <!--noindex-->
           <div class="post-button text-center">

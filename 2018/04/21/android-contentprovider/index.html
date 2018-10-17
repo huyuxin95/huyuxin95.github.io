@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
 <meta property="og:description" content="##概述:ContentProvider是Android中的四大组件之一,它起到了在应用程序之间共享数据的作用,同时也是标准的数据访问接口.因为Android系统进程间相互隔离,并且因为文件权限的原因,无法获得其他进程或应用程序的数据,Android使用ContextProvider作为数据访问接口层为其他进程提供数据,通过使用Binder将读取其他进程信息的操作变为先在原进程获取数据然后通过Bi">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-13T05:57:18.352Z">
+<meta property="og:updated_time" content="2018-10-17T15:17:17.099Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)什么是ContentProvider">
 <meta name="twitter:description" content="##概述:ContentProvider是Android中的四大组件之一,它起到了在应用程序之间共享数据的作用,同时也是标准的数据访问接口.因为Android系统进程间相互隔离,并且因为文件权限的原因,无法获得其他进程或应用程序的数据,Android使用ContextProvider作为数据访问接口层为其他进程提供数据,通过使用Binder将读取其他进程信息的操作变为先在原进程获取数据然后通过Bi">
@@ -300,8 +300,8 @@
       
 
       
-        <p>##概述:<br>ContentProvider是Android中的四大组件之一,它起到了在应用程序之间共享数据的作用,同时也是标准的数据访问接口.<br>因为Android系统进程间相互隔离,并且因为文件权限的原因,无法获得其他进程或应用程序的数据,Android使用ContextProvider作为数据访问接口层<br>为其他进程提供数据,通过使用Binder将读取其他进程信息的操作变为先在原进程获取数据然后通过Binder跨进程传输数据到对应的进程的形式<br>并且考虑到数据量比较大时Parcel效率低的问题,在数据传输时将数据写入到共享内存中去,通过Binder传递给另一个进程对应共享内存的文件描述符,<br>在另一个进程就可以轻松读取到对应的数据了</p>
-<p>##ContentProvider的获取与发布<br>Context通过acquireProvider获取IContentProvider接口的实现类,然后通过AMS查询已经发布的ContentProvider</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="##概述:"></a>##概述:</h2><p>ContentProvider是Android中的四大组件之一,它起到了在应用程序之间共享数据的作用,同时也是标准的数据访问接口.<br>因为Android系统进程间相互隔离,并且因为文件权限的原因,无法获得其他进程或应用程序的数据,Android使用ContextProvider作为数据访问接口层<br>为其他进程提供数据,通过使用Binder将读取其他进程信息的操作变为先在原进程获取数据然后通过Binder跨进程传输数据到对应的进程的形式<br>并且考虑到数据量比较大时Parcel效率低的问题,在数据传输时将数据写入到共享内存中去,通过Binder传递给另一个进程对应共享内存的文件描述符,<br>在另一个进程就可以轻松读取到对应的数据了</p>
+<h2 id="ContentProvider的获取与发布"><a href="#ContentProvider的获取与发布" class="headerlink" title="##ContentProvider的获取与发布"></a>##ContentProvider的获取与发布</h2><p>Context通过acquireProvider获取IContentProvider接口的实现类,然后通过AMS查询已经发布的ContentProvider</p>
 <p>如果声明ContentProvider所在的进程还未启动则先启动对应的进程,在对应进程的bindApplication当执行完Application的attach之后<br>会调用installProvider安装当前进程的ContentProvider并调用ContentProvider的onCreate方法,</p>
 <p>然后调用AMS将installProvider的ContentProvider的内部类Transport,也是IBinder的实现类通过publishContentProviders发布到AMS中<br>之后acquireProvider获取到IContentProvider接口的实现类也就是Transport,通过其引用代理远程调用Transport的方法,Transport调用ContentProvider的方法</p>
 
@@ -422,8 +422,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -494,6 +503,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">##概述:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ContentProvider的获取与发布"><span class="nav-number">2.</span> <span class="nav-text">##ContentProvider的获取与发布</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="##概述广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程. 广播主要分为两部分,一:广播的注册与发送.二:广播的接收 ###广播的注册与发送 广播的注册根据其注册形式不同主要分为两种, 一种是静态注册,通过在清单文件(AndroidManifeast),声明已经实现的Receive类并注明监听">
+<meta name="description" content="##概述广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程. 广播主要分为两部分,一:广播的注册与发送.二:广播的接收 ###广播的注册与发送广播的注册根据其注册形式不同主要分为两种, 一种是静态注册,通过在清单文件(AndroidManifeast),声明已经实现的Receive类并注明监听的">
 <meta name="keywords" content="Android基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="(Android基础)什么是BroadcastReceive">
 <meta property="og:url" content="http://yoursite.com/2018/04/05/android-broadcastreceive/index.html">
 <meta property="og:site_name" content="Huyuxin&#39;s Blog">
-<meta property="og:description" content="##概述广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程. 广播主要分为两部分,一:广播的注册与发送.二:广播的接收 ###广播的注册与发送 广播的注册根据其注册形式不同主要分为两种, 一种是静态注册,通过在清单文件(AndroidManifeast),声明已经实现的Receive类并注明监听">
+<meta property="og:description" content="##概述广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程. 广播主要分为两部分,一:广播的注册与发送.二:广播的接收 ###广播的注册与发送广播的注册根据其注册形式不同主要分为两种, 一种是静态注册,通过在清单文件(AndroidManifeast),声明已经实现的Receive类并注明监听的">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-13T05:10:39.673Z">
+<meta property="og:updated_time" content="2018-10-17T15:17:55.665Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="(Android基础)什么是BroadcastReceive">
-<meta name="twitter:description" content="##概述广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程. 广播主要分为两部分,一:广播的注册与发送.二:广播的接收 ###广播的注册与发送 广播的注册根据其注册形式不同主要分为两种, 一种是静态注册,通过在清单文件(AndroidManifeast),声明已经实现的Receive类并注明监听">
+<meta name="twitter:description" content="##概述广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程. 广播主要分为两部分,一:广播的注册与发送.二:广播的接收 ###广播的注册与发送广播的注册根据其注册形式不同主要分为两种, 一种是静态注册,通过在清单文件(AndroidManifeast),声明已经实现的Receive类并注明监听的">
 
 
 
@@ -300,10 +300,9 @@
       
 
       
-        <p>##概述<br>广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程.</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="##概述"></a>##概述</h2><p>广播是Android的四大组件之一,它本质是一种全局的监听器,是一种消息订阅/发布机制,可以监听用户发出的广播,也能够监听系统级广播消息,并拥有自己的进程.</p>
 <p>广播主要分为两部分,一:广播的注册与发送.二:广播的接收</p>
-<p>###广播的注册与发送</p>
-<p>广播的注册根据其注册形式不同主要分为两种,</p>
+<h2 id="广播的注册与发送"><a href="#广播的注册与发送" class="headerlink" title="###广播的注册与发送"></a>###广播的注册与发送</h2><p>广播的注册根据其注册形式不同主要分为两种,</p>
 <p>一种是静态注册,通过在清单文件(AndroidManifeast),声明已经实现的Receive类并注明监听的action,这种静态注册的方法,会在应用第一次启动后接受者添加到系统中去,下次当有需要接受的广播发出时即使应用进程还未启动也能唤醒对应进程来处理广播消息</p>
 <p>另一种是动态注册,通过广播接受者的实例和填充好接受条件的Intent,调用Context的registerReceiver()从而实现注册</p>
 <p>广播的发送根据其发送的广播的类型分为三种<br>发送普通广播 ,发送有序广播,发送粘性广播</p>
@@ -313,8 +312,8 @@
 <li>粘性广播发送之后,将被保存在AMS中,当有新的接受者注册后将接受到之前发送的广播</li>
 </ul>
 <p><em>(tips:有序广播有先后顺序可以被拦截,粘性广播可以被移除)</em></p>
-<p>###广播的接收<br>在广播注册之后当有对应的广播需要被接收时,BroadcastReceiver的onReceive将被调用<br>onReceive默认在进程的主线程执行,所以不能在里面执行耗时操作</p>
-<p>###广播的注册(Framework版)<br>静态广播的注册在应用被安装后,系统启动通过PMS解析已安装的应用列表,解析应用的清单文件获得在清单文件注册的广播接受者<br>动态注册调用Context中的registerReceiver,根据注册的BroadcastReceiver生成对应的ReceiverDispatcher,里面包含一个IBinder实现类的引用<br>然后传递给AMS的方法registerReceiver并将其入队到BroadcastQueue中去</p>
+<h2 id="广播的接收"><a href="#广播的接收" class="headerlink" title="###广播的接收"></a>###广播的接收</h2><p>在广播注册之后当有对应的广播需要被接收时,BroadcastReceiver的onReceive将被调用<br>onReceive默认在进程的主线程执行,所以不能在里面执行耗时操作</p>
+<h2 id="广播的注册-Framework版"><a href="#广播的注册-Framework版" class="headerlink" title="###广播的注册(Framework版)"></a>###广播的注册(Framework版)</h2><p>静态广播的注册在应用被安装后,系统启动通过PMS解析已安装的应用列表,解析应用的清单文件获得在清单文件注册的广播接受者<br>动态注册调用Context中的registerReceiver,根据注册的BroadcastReceiver生成对应的ReceiverDispatcher,里面包含一个IBinder实现类的引用<br>然后传递给AMS的方法registerReceiver并将其入队到BroadcastQueue中去</p>
 <p><strong>广播的发送与接收</strong></p>
 <p>广播的发送传入接收的Intent.并传递给AMS的broadcastIntentLocked,根据广播的发送类型,将已有的广播接受者添加到对应的集合中去,无序广播一次性分发完成,有序广播依次分发<br>在分发的时候调用对应应用程序的ApplicationThread的scheduleRegisteredReceiver然后调用之前传入的IBinder实现类的引用的performReceiver然后对应广播接受者被创建出来并<br>调用其onReceive方法</p>
 <p><strong>为什么说onReceiver在对应进程的主线程执行呢?</strong></p>
@@ -438,8 +437,17 @@ registerReceiver(BroadcastReceiver receiver, IntentFilter filter, String broadca
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -510,6 +518,22 @@ registerReceiver(BroadcastReceiver receiver, IntentFilter filter, String broadca
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">##概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广播的注册与发送"><span class="nav-number">2.</span> <span class="nav-text">###广播的注册与发送</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广播的接收"><span class="nav-number">3.</span> <span class="nav-text">###广播的接收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广播的注册-Framework版"><span class="nav-number">4.</span> <span class="nav-text">###广播的注册(Framework版)</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
